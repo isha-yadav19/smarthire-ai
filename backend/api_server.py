@@ -47,14 +47,13 @@ def _seed_demo_users():
         ('ada', 'ada@smarthire.ai', 'demo123', 'recruiter'),
         ('isha', 'isha@smarthire.ai', 'demo123', 'candidate'),
     ]
+    changed = False
     for username, email, password, role in demo:
         if username not in auth_manager.users:
             auth_manager.register_user(username, email, password, role)
             print(f"[SEED] Created demo user: {username}")
-        else:
-            # Reset password to demo123 in case it changed
-            auth_manager.users[username]['password_hash'] = auth_manager.hash_password(password)
-            auth_manager._save_users(auth_manager.users)
+            changed = True
+    # Only save if we actually added something — don't overwrite existing users
 
 _seed_demo_users()
 

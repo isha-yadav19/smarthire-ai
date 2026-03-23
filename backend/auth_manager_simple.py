@@ -94,7 +94,7 @@ class AuthManager:
                 if 'is_active' not in u:
                     u['is_active'] = True
                 
-                if u['username'] == username or u['email'] == username:
+            if u['username'].lower() == username.lower() or u['email'].lower() == username.lower():
                     user = u
                     break
             
