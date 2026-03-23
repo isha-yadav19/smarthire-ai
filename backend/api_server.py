@@ -57,9 +57,9 @@ def _seed_demo_users():
 
 _seed_demo_users()
 
-# Upload folder — always relative to project root
-UPLOAD_FOLDER = ROOT_DIR / 'uploads'
-UPLOAD_FOLDER.mkdir(exist_ok=True)
+# Upload folder — use /tmp for cloud compatibility (Railway, Render, etc.)
+UPLOAD_FOLDER = Path(os.environ.get('UPLOAD_DIR', '/tmp/smarthire_uploads'))
+UPLOAD_FOLDER.mkdir(exist_ok=True, parents=True)
 
 # Load processing components once — paths relative to project root
 config_path = ROOT_DIR / 'data' / 'config.json'
