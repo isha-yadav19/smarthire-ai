@@ -42,8 +42,9 @@ textarea.form-control{min-height:100px;}
 .search-input{flex:1;padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:.85rem;outline:none;}
 .search-input:focus{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.06);}
 .search-input::placeholder{color:rgba(255,255,255,.25);}
-.filter-select{padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:rgba(255,255,255,.7);font-family:'Inter',sans-serif;font-size:.82rem;outline:none;cursor:pointer;}
+.filter-select{padding:11px 14px;background:#0a0a0f;border:1px solid rgba(255,255,255,.08);border-radius:8px;color:rgba(255,255,255,.7);font-family:'Inter',sans-serif;font-size:.82rem;outline:none;cursor:pointer;}
 .filter-select:focus{border-color:rgba(99,102,241,.5);}
+.filter-select option{background:#0a0a0f;color:#fff;}
 .gap-tag{display:inline-block;padding:3px 10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:20px;margin:3px 3px 3px 0;font-size:.72rem;color:#fca5a5;}
 .match-bar-wrap{margin-top:10px;}
 .match-bar-track{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-top:4px;}
@@ -77,10 +78,12 @@ textarea.form-control{min-height:100px;}
 <div id="jobs" class="section active">
 <div class="search-bar">
   <input class="search-input" id="jobSearch" placeholder="🔍  Search jobs by title, company or skill..." oninput="filterJobs()">
+  <input class="search-input" id="jobLocation" placeholder="📍  Filter by location..." oninput="filterJobs()" style="max-width:220px;">
   <select class="filter-select" id="jobFilter" onchange="filterJobs()">
-    <option value="">All Locations</option>
+    <option value="">All Types</option>
     <option value="remote">Remote</option>
-    <option value="onsite">On-site</option>
+    <option value="full-time">Full-time</option>
+    <option value="part-time">Part-time</option>
   </select>
 </div>
 <div id="jobsList"></div>
@@ -90,10 +93,13 @@ textarea.form-control{min-height:100px;}
 <div class="card">
 <h2>Upload Your Resume</h2>
 <div class="file-upload" onclick="document.getElementById('myResume').click()">
-<input type="file" id="myResume" accept=".pdf,.docx" style="display:none;">
+<input type="file" id="myResume" accept=".pdf,.docx" style="display:none;" onchange="showFileName(this)">
 <div style="font-size:2rem;margin-bottom:8px;">📄</div>
 <div>Click to upload resume</div>
 <div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-top:8px;">PDF or DOCX format</div>
+</div>
+<div id="fileNameDisplay" style="display:none;padding:10px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.25);border-radius:8px;margin-bottom:16px;font-size:.85rem;color:#a5b4fc;">
+  📎 <span id="fileNameText"></span>
 </div>
 <button class="btn" onclick="uploadResume()">Save Resume</button>
 </div>
@@ -200,11 +206,13 @@ fetch('/api/applications').then(r=>r.json()).then(d=>{apps=d.applications||[];re
 
 function filterJobs(){
   const q=document.getElementById('jobSearch').value.toLowerCase();
-  const loc=document.getElementById('jobFilter').value.toLowerCase();
+  const loc=document.getElementById('jobLocation').value.toLowerCase();
+  const type=document.getElementById('jobFilter').value.toLowerCase();
   const filtered=jobs.filter(j=>{
     const matchQ=!q||j.title.toLowerCase().includes(q)||j.company.toLowerCase().includes(q)||(j.required_skills||[]).some(s=>s.toLowerCase().includes(q));
-    const matchL=!loc||(loc==='remote'?j.location.toLowerCase().includes('remote'):!j.location.toLowerCase().includes('remote'));
-    return matchQ&&matchL;
+    const matchL=!loc||j.location.toLowerCase().includes(loc);
+    const matchT=!type||(type==='remote'?j.location.toLowerCase().includes('remote'):j.type&&j.type.toLowerCase().includes(type));
+    return matchQ&&matchL&&matchT;
   });
   renderJobCards(filtered);
 }
@@ -398,6 +406,14 @@ function checkATS(){
     </div>`;
   })
   .catch(err=>{document.getElementById('atsResult').innerHTML=`<div class="card"><p style="color:#fca5a5;">Error: ${err.message}</p></div>`;});
+}
+
+function showFileName(input){
+  const name=input.files[0]?.name||'';
+  const display=document.getElementById('fileNameDisplay');
+  const text=document.getElementById('fileNameText');
+  if(name){text.textContent=name;display.style.display='block';}
+  else{display.style.display='none';}
 }
 
 function show(s){
