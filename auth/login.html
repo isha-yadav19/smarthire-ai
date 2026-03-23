@@ -8,7 +8,27 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap');
 
     * { box-sizing:border-box; margin:0; padding:0; }
-    body { font-family:'Inter',sans-serif; background:#000; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+    body { 
+      font-family:'Inter',sans-serif; 
+      background:#0a0a0f; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      min-height:100vh; 
+      padding:20px;
+      position:relative;
+    }
+    body::before {
+      content:'';
+      position:fixed;
+      inset:0;
+      background-image:
+        linear-gradient(rgba(99,102,241,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99,102,241,.06) 1px, transparent 1px);
+      background-size:40px 40px;
+      pointer-events:none;
+      z-index:0;
+    }
 
     .wrap {
       min-height:580px;
@@ -22,6 +42,8 @@
       position:relative;
       max-width:1100px;
       width:100%;
+      z-index:1;
+      box-shadow:0 20px 60px rgba(0,0,0,.5);
     }
 
     .wrap::before {
