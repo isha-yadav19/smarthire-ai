@@ -38,6 +38,10 @@ dist/
 build/
 *.egg-info/
 
+# Kiro/AmazonQ internal files
+.amazonq/
+.kiro/
+
 # Uploads (runtime files)
 uploads/
 
