@@ -67,6 +67,7 @@ textarea.form-control{min-height:100px;}
 <div class="nav-item" onclick="show('upload')">Upload Resume</div>
 <div class="nav-item" onclick="show('applications')">My Applications</div>
 <div class="nav-item" onclick="show('ats')">ATS Checker</div>
+<div class="nav-item" onclick="show('career')">Career & Courses</div>
 <div class="nav-item" onclick="show('profile')">Profile</div>
 <div class="nav-item" style="margin-top:auto;" onclick="logout()">Logout</div>
 </div>
@@ -156,6 +157,11 @@ textarea.form-control{min-height:100px;}
 <button class="btn">Save Profile</button>
 </div>
 </div>
+
+<div id="career" class="section">
+<div id="careerContent"></div>
+</div>
+
 </div>
 </div>
 
@@ -423,8 +429,78 @@ function show(s){
   document.querySelectorAll('.nav-item').forEach(n=>{
     if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes(`'${s}'`))n.classList.add('active');
   });
-  const titles={jobs:'Browse Jobs',upload:'Upload Resume',applications:'My Applications',ats:'ATS Checker',profile:'Profile'};
+  const titles={jobs:'Browse Jobs',upload:'Upload Resume',applications:'My Applications',ats:'ATS Checker',career:'Career & Courses',profile:'Profile'};
   document.getElementById('title').textContent=titles[s]||s;
+  if(s==='career') renderCareer();
+}
+
+function renderCareer(){
+  const missingSkills=[...new Set(apps.flatMap(a=>a.missing_skills||[]))];
+  const targetRole=user.username?'Software Developer':'Software Developer';
+
+  // Career paths based on common roles
+  const careerPaths=[
+    {role:'Frontend Developer',skills:['HTML','CSS','JavaScript','React','TypeScript'],icon:'🎨'},
+    {role:'Backend Developer',skills:['Python','Node.js','Django','REST API','PostgreSQL'],icon:'⚙️'},
+    {role:'Full Stack Developer',skills:['JavaScript','React','Node.js','SQL','Docker'],icon:'🚀'},
+    {role:'Data Scientist',skills:['Python','Machine Learning','SQL','Data Science','Statistics'],icon:'📊'},
+    {role:'DevOps Engineer',skills:['Docker','Kubernetes','AWS','CI/CD','Linux'],icon:'🔧'},
+    {role:'Cloud Engineer',skills:['AWS','Azure','Docker','Kubernetes','Terraform'],icon:'☁️'},
+  ];
+
+  fetch('/data/courses.json').then(r=>r.json()).then(data=>{
+    const allCourses=data.courses||{};
+
+    // Recommended courses based on missing skills
+    const recCourses=missingSkills.slice(0,8).flatMap(skill=>{
+      const key=Object.keys(allCourses).find(k=>k.toLowerCase()===skill.toLowerCase());
+      return key?(allCourses[key]||[]).slice(0,1).map(c=>({...c,skill:key})):[];
+    });
+
+    document.getElementById('careerContent').innerHTML=`
+    <div class="card" style="margin-bottom:20px;">
+      <h2 style="margin-bottom:6px;">Career Paths</h2>
+      <p style="color:rgba(255,255,255,.4);font-size:.82rem;margin-bottom:20px;">Explore roles that match your skills</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;">
+        ${careerPaths.map(p=>`
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px;transition:border-color .2s;cursor:default;"
+          onmouseover="this.style.borderColor='rgba(99,102,241,.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'">
+          <div style="font-size:1.5rem;margin-bottom:8px;">${p.icon}</div>
+          <div style="font-size:.92rem;font-weight:600;margin-bottom:10px;">${p.role}</div>
+          <div>${p.skills.map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-bottom:6px;">Recommended Courses</h2>
+      <p style="color:rgba(255,255,255,.4);font-size:.82rem;margin-bottom:20px;">
+        ${missingSkills.length?`Based on ${missingSkills.length} skill gaps from your applications`:'Apply to jobs to get personalized course recommendations'}
+      </p>
+      ${missingSkills.length?`
+      <div style="margin-bottom:16px;">
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:8px;">Skills to improve:</div>
+        <div>${missingSkills.slice(0,10).map(s=>`<span style="display:inline-block;padding:3px 10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:20px;margin:3px 3px 3px 0;font-size:.72rem;color:#fca5a5;">${s}</span>`).join('')}</div>
+      </div>`:''}
+      ${recCourses.length?`
+      <div style="display:grid;gap:12px;">
+        ${recCourses.map(c=>`
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:16px;">
+          <div style="flex:1;">
+            <div style="font-size:.88rem;font-weight:600;margin-bottom:4px;">${c.title}</div>
+            <div style="font-size:.75rem;color:rgba(255,255,255,.4);">${c.provider} &nbsp;·&nbsp; ${c.duration} &nbsp;·&nbsp; ${c.level}</div>
+            <span style="display:inline-block;margin-top:6px;padding:2px 8px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:20px;font-size:.68rem;color:#a5b4fc;">${c.skill}</span>
+          </div>
+          <a href="${c.url}" target="_blank" style="padding:8px 16px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:8px;color:#fff;text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap;flex-shrink:0;">View Course →</a>
+        </div>`).join('')}
+      </div>`:`
+      <div style="padding:32px;text-align:center;color:rgba(255,255,255,.3);font-size:.85rem;">
+        📚 Apply to jobs and analyze skill gaps to get course recommendations
+      </div>`}
+    </div>`;
+  }).catch(()=>{
+    document.getElementById('careerContent').innerHTML='<div class="card"><p style="color:rgba(255,255,255,.4);">Could not load career data.</p></div>';
+  });
 }
 
 function closeModal(){document.getElementById('modal').classList.remove('active');}
