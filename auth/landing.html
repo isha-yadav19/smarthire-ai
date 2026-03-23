@@ -518,11 +518,7 @@
         Don't have an account? <a href="/auth/signup.html">Sign up</a>
       </div>
 
-      <div style="text-align:center;margin-top:20px;padding:16px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:8px;">
-        <div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:12px;">Quick Demo Access</div>
-        <button onclick="demoLogin('recruiter')" style="padding:10px 20px;background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);border-radius:6px;color:#a5b4fc;cursor:pointer;margin:0 8px;font-size:.85rem;">Demo Recruiter</button>
-        <button onclick="demoLogin('candidate')" style="padding:10px 20px;background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);border-radius:6px;color:#a5b4fc;cursor:pointer;margin:0 8px;font-size:.85rem;">Demo Candidate</button>
-      </div>
+
     </div>
   </div>
 
@@ -577,13 +573,7 @@
       await doLogin(username, password, selectedRole);
     });
 
-    async function demoLogin(role) {
-      if (role === 'recruiter') {
-        await doLogin('ada', 'demo123', 'recruiter');
-      } else {
-        await doLogin('isha', 'demo123', 'candidate');
-      }
-    }
+
   </script>
 </body>
 </html>
