@@ -535,7 +535,7 @@
       </div>
     </form>
 
-    <div class="signin">Already have an account?<a href="login.html">Sign in</a></div>
+    <div class="signin">Already have an account?<a href="/auth/login.html">Sign in</a></div>
   </div>
 
 </div>
@@ -603,7 +603,7 @@
       if (data.success) {
         showSuccess('✓ Account created! Redirecting to login...');
         setTimeout(() => {
-          window.location.href = 'login.html';
+          window.location.href = '/auth/login.html';
         }, 2000);
       } else {
         showError(data.message || 'Registration failed. Please try again.');
