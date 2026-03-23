@@ -463,10 +463,13 @@ function renderCareer(){
       <p style="color:rgba(255,255,255,.4);font-size:.82rem;margin-bottom:20px;">Explore roles that match your skills</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;">
         ${careerPaths.map(p=>`
-        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px;transition:border-color .2s;cursor:default;"
-          onmouseover="this.style.borderColor='rgba(99,102,241,.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,.07)'">
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px;transition:all .2s;cursor:pointer;"
+          onmouseover="this.style.borderColor='rgba(99,102,241,.4)';this.style.background='rgba(99,102,241,.06)'"
+          onmouseout="this.style.borderColor='rgba(255,255,255,.07)';this.style.background='rgba(255,255,255,.03)'"
+          onclick="showRoleCourses(${JSON.stringify(p).replace(/"/g,'&quot;')},${JSON.stringify(allCourses).replace(/"/g,'&quot;')})">
           <div style="font-size:1.5rem;margin-bottom:8px;">${p.icon}</div>
-          <div style="font-size:.92rem;font-weight:600;margin-bottom:10px;">${p.role}</div>
+          <div style="font-size:.92rem;font-weight:600;margin-bottom:4px;">${p.role}</div>
+          <div style="font-size:.72rem;color:rgba(99,102,241,.8);margin-bottom:10px;">Click to see courses →</div>
           <div>${p.skills.map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>
         </div>`).join('')}
       </div>
@@ -491,7 +494,7 @@ function renderCareer(){
             <div style="font-size:.75rem;color:rgba(255,255,255,.4);">${c.provider} &nbsp;·&nbsp; ${c.duration} &nbsp;·&nbsp; ${c.level}</div>
             <span style="display:inline-block;margin-top:6px;padding:2px 8px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:20px;font-size:.68rem;color:#a5b4fc;">${c.skill}</span>
           </div>
-          <a href="${c.url}" target="_blank" style="padding:8px 16px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:8px;color:#fff;text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap;flex-shrink:0;">View Course →</a>
+          <a href="${c.url}" target="_blank" rel="noopener noreferrer" style="padding:8px 16px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:8px;color:#fff;text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap;flex-shrink:0;">View Course →</a>
         </div>`).join('')}
       </div>`:`
       <div style="padding:32px;text-align:center;color:rgba(255,255,255,.3);font-size:.85rem;">
@@ -501,6 +504,35 @@ function renderCareer(){
   }).catch(()=>{
     document.getElementById('careerContent').innerHTML='<div class="card"><p style="color:rgba(255,255,255,.4);">Could not load career data.</p></div>';
   });
+}
+
+function showRoleCourses(path, allCourses){
+  const roleCourses = path.skills.flatMap(skill=>{
+    const key = Object.keys(allCourses).find(k=>k.toLowerCase()===skill.toLowerCase());
+    return key ? (allCourses[key]||[]).map(c=>({...c,skill:key})) : [];
+  });
+  const el = document.getElementById('careerContent');
+  const courseHTML = roleCourses.length ? roleCourses.map(c=>`
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:16px;">
+      <div style="flex:1;">
+        <div style="font-size:.88rem;font-weight:600;margin-bottom:4px;">${c.title}</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);">${c.provider} &nbsp;·&nbsp; ${c.duration} &nbsp;·&nbsp; ${c.level}</div>
+        <span style="display:inline-block;margin-top:6px;padding:2px 8px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:20px;font-size:.68rem;color:#a5b4fc;">${c.skill}</span>
+      </div>
+      <a href="${c.url}" target="_blank" rel="noopener noreferrer" style="padding:8px 16px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:8px;color:#fff;text-decoration:none;font-size:.78rem;font-weight:600;white-space:nowrap;flex-shrink:0;">View Course →</a>
+    </div>`).join('') : '<p style="color:rgba(255,255,255,.4);font-size:.85rem;">No courses found for this path.</p>';
+
+  el.innerHTML = `
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+        <button onclick="renderCareer()" style="padding:7px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:rgba(255,255,255,.6);cursor:pointer;font-size:.78rem;">← Back</button>
+        <div>
+          <div style="font-size:1rem;font-weight:600;">${path.icon} ${path.role}</div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.4);">Courses for this career path</div>
+        </div>
+      </div>
+      <div style="display:grid;gap:12px;">${courseHTML}</div>
+    </div>`;
 }
 
 function closeModal(){document.getElementById('modal').classList.remove('active');}
