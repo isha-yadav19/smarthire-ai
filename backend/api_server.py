@@ -5,12 +5,6 @@ Handles authentication requests from login page
 
 from flask import Flask, request, jsonify, session, redirect, url_for, send_from_directory
 from flask_cors import CORS
-try:
-    from auth_manager_simple import AuthManager
-    print("[OK] Using simple file-based authentication (no PostgreSQL required)")
-except ImportError:
-    from auth_manager import AuthManager
-    print("[OK] Using PostgreSQL authentication")
 import os
 import sys
 import json
@@ -20,10 +14,17 @@ from pathlib import Path
 from datetime import timedelta
 from werkzeug.utils import secure_filename
 
-# Ensure backend/ submodules are importable
+# Ensure backend/ submodules are importable — must happen BEFORE local imports
 BASE_DIR = Path(__file__).parent          # backend/
 ROOT_DIR = BASE_DIR.parent                # project root
 sys.path.insert(0, str(BASE_DIR))
+
+try:
+    from auth_manager_simple import AuthManager
+    print("[OK] Using simple file-based authentication (no PostgreSQL required)")
+except ImportError:
+    from auth_manager import AuthManager
+    print("[OK] Using PostgreSQL authentication")
 
 # Resume processing imports
 from parsers import ResumeParser, JDParser
