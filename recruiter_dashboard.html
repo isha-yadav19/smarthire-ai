@@ -429,7 +429,7 @@ let jobs = [];
 let user = JSON.parse(sessionStorage.getItem('user') || '{}');
 
 // Redirect if not logged in
-if (!user.username) window.location.href = 'auth/landing.html';
+if (!user.username) window.location.href = '/';
 
 // Init user info
 document.getElementById('sideAvatar').textContent = user.username[0].toUpperCase();
@@ -439,7 +439,7 @@ document.getElementById('profName').value = user.username || '';
 document.getElementById('profEmail').value = user.email || '';
 
 // Load jobs from data file
-fetch('data/jobs.json').then(r=>r.json()).then(d=>{jobs=d.jobs||[];renderJobs();}).catch(()=>{});
+fetch('/data/jobs.json').then(r=>r.json()).then(d=>{jobs=d.jobs||[];renderJobs();}).catch(()=>{});
 
 function renderJobs() {
   document.getElementById('statJobs').textContent = jobs.length;
@@ -744,7 +744,7 @@ function showAlert(msg, type) {
   setTimeout(()=>a.classList.remove('show'), 4000);
 }
 
-function logout() { sessionStorage.clear(); location.href = 'auth/landing.html'; }
+function logout() { sessionStorage.clear(); location.href = '/'; }
 </script>
 </body>
 </html>

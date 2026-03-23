@@ -195,8 +195,8 @@ let user=JSON.parse(sessionStorage.getItem('user')||'{"username":"Candidate","em
 document.getElementById('profName').value=user.username||'';
 document.getElementById('profEmail').value=user.email||'';
 
-fetch('data/jobs.json').then(r=>r.json()).then(d=>{jobs=d.jobs||[];renderJobs();}).catch(()=>renderJobs());
-fetch('data/applications.json').then(r=>r.json()).then(d=>{apps=d.applications||[];renderApps();}).catch(()=>renderApps());
+fetch('/data/jobs.json').then(r=>r.json()).then(d=>{jobs=d.jobs||[];renderJobs();}).catch(()=>renderJobs());
+fetch('/api/applications').then(r=>r.json()).then(d=>{apps=d.applications||[];renderApps();}).catch(()=>renderApps());
 
 function filterJobs(){
   const q=document.getElementById('jobSearch').value.toLowerCase();
@@ -412,7 +412,7 @@ function show(s){
 }
 
 function closeModal(){document.getElementById('modal').classList.remove('active');}
-function logout(){sessionStorage.clear();location.href='auth/landing.html';}
+function logout(){sessionStorage.clear();location.href='/';}
 </script>
 </body>
 </html>
