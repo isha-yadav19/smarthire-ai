@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartHire.AI - Recruiter Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 28px; font-weight: 600; }
+        .header .user { display: flex; align-items: center; gap: 15px; }
+        .header .user img { width: 40px; height: 40px; border-radius: 50%; background: white; }
+        
+        .main { padding: 40px; }
+        
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 200px;
+            transition: border-color 0.3s;
+        }
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            background: #f0f4ff;
+            border-color: #764ba2;
+        }
+        .upload-area.dragover {
+            background: #e8f0ff;
+            border-color: #667eea;
+        }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .upload-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .upload-hint {
+            font-size: 13px;
+            color: #999;
+        }
+        
+        .file-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .file-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e0e0e0;
+        }
+        .file-item .name {
+            font-size: 14px;
+            color: #333;
+        }
+        .file-item .size {
+            font-size: 12px;
+            color: #999;
+        }
+        .file-item .remove {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .settings .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .settings label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+        .settings input {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .settings input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress {
+            display: none;
+            margin-top: 20px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .results {
+            display: none;
+            margin-top: 30px;
+        }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .results-header h3 {
+            font-size: 20px;
+            color: #333;
+        }
+        .export-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-export {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-export:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .results-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .results-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+        .results-table tr:hover {
+            background: #f8f9fa;
+        }
+        .score {
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .score.high { background: #d4edda; color: #155724; }
+        .score.medium { background: #fff3cd; color: #856404; }
+        .score.low { background: #f8d7da; color: #721c24; }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert.show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 SmartHire.AI - Recruiter Dashboard</h1>
+            <div class="user">
+                <span id="username">Recruiter</span>
+                <button class="btn" style="padding: 8px 16px; background: rgba(255,255,255,0.2);" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="alert" id="alert"></div>
+
+            <!-- Job Description Section -->
+            <div class="section">
+                <h2>📝 Job Description</h2>
+                <div class="form-group">
+                    <label>Enter or paste the job description below:</label>
+                    <textarea id="jobDescription" placeholder="Example:
+
+Senior Python Developer
+
+Required Skills:
+- 5+ years Python experience
+- Django or Flask
+- PostgreSQL
+- Docker
+- Git
+
+Preferred Skills:
+- AWS
+- Kubernetes
+- React
+
+Experience: 5+ years in software development"></textarea>
+                </div>
+            </div>
+
+            <!-- Resume Upload Section -->
+            <div class="section">
+                <h2>📁 Upload Resumes</h2>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">Drag & drop resume files here or click to browse</div>
+                    <div class="upload-hint">Supports PDF and DOCX files (up to 500MB total)</div>
+                    <input type="file" id="fileInput" multiple accept=".pdf,.docx" style="display: none;">
+                </div>
+                <div class="file-list" id="fileList"></div>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="section">
+                <h2>⚙️ Processing Settings</h2>
+                <div class="settings">
+                    <div class="input-group">
+                        <label>Top N Matches</label>
+                        <input type="number" id="topN" value="10" min="1" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label>Minimum Score (%)</label>
+                        <input type="number" id="minScore" value="0" min="0" max="100">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Process Button -->
+            <div style="text-align: center;">
+                <button class="btn btn-primary" id="processBtn" onclick="processResumes()">
+                    🚀 Start Screening Process
+                </button>
+            </div>
+
+            <!-- Progress -->
+            <div class="progress" id="progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Processing...</div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results" id="results">
+                <div class="section">
+                    <div class="results-header">
+                        <h3>🏆 Top Matching Candidates</h3>
+                        <div class="export-btns">
+                            <button class="btn-export" onclick="exportCSV()">📊 Export CSV</button>
+                            <button class="btn-export" onclick="exportJSON()">📄 Export JSON</button>
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="results-table" id="resultsTable">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Score</th>
+                                    <th>Experience</th>
+                                    <th>Matched Skills</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let selectedFiles = [];
+        let resultsData = [];
+
+        // File upload handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            for (let file of files) {
+                if (file.type === 'application/pdf' || file.name.endsWith('.docx')) {
+                    selectedFiles.push(file);
+                }
+            }
+            displayFiles();
+        }
+
+        function displayFiles() {
+            fileList.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                div.innerHTML = `
+                    <div>
+                        <div class="name">📄 ${file.name}</div>
+                        <div class="size">${(file.size / 1024).toFixed(2)} KB</div>
+                    </div>
+                    <button class="remove" onclick="removeFile(${index})">Remove</button>
+                `;
+                fileList.appendChild(div);
+            });
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            displayFiles();
+        }
+
+        async function processResumes() {
+            const jobDescription = document.getElementById('jobDescription').value.trim();
+            const topN = parseInt(document.getElementById('topN').value);
+            const minScore = parseFloat(document.getElementById('minScore').value);
+
+            if (!jobDescription) {
+                showAlert('Please enter a job description', 'error');
+                return;
+            }
+
+            if (selectedFiles.length === 0) {
+                showAlert('Please upload at least one resume', 'error');
+                return;
+            }
+
+            // Step 1: Upload files
+            document.getElementById('processBtn').disabled = true;
+            document.getElementById('progress').style.display = 'block';
+            updateProgress(10, 'Uploading resumes...');
+
+            const formData = new FormData();
+            selectedFiles.forEach(file => formData.append('files', file));
+
+            try {
+                const uploadResponse = await fetch(`${API_URL}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const uploadData = await uploadResponse.json();
+                console.log('Upload response:', uploadData);
+
+                if (!uploadData.success) {
+                    throw new Error(uploadData.message || 'Upload failed');
+                }
+
+                updateProgress(50, `Uploaded ${uploadData.uploaded.length} files. Processing...`);
+
+                // Step 2: Process resumes
+                const processResponse = await fetch(`${API_URL}/process`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        job_description: jobDescription,
+                        top_n: topN,
+                        min_score: minScore || null
+                    })
+                });
+
+                const processData = await processResponse.json();
+                console.log('Process response:', processData);
+
+                if (!processData.success) {
+                    throw new Error(processData.message || 'Processing failed');
+                }
+
+                updateProgress(100, 'Complete!');
+                resultsData = processData.results;
+                displayResults(processData.results);
+                showAlert(`Successfully processed ${processData.total_processed} resumes!`, 'success');
+
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error: ' + error.message, 'error');
+            } finally {
+                document.getElementById('processBtn').disabled = false;
+                setTimeout(() => {
+                    document.getElementById('progress').style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        function updateProgress(percent, text) {
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressText').textContent = text;
+        }
+
+        function displayResults(results) {
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = '';
+
+            results.forEach((result, index) => {
+                const scoreClass = result.total_score >= 80 ? 'high' : result.total_score >= 60 ? 'medium' : 'low';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>#${index + 1}</strong></td>
+                    <td>${result.name}</td>
+                    <td>${result.email || 'N/A'}</td>
+                    <td>${result.phone || 'N/A'}</td>
+                    <td><span class="score ${scoreClass}">${result.total_score.toFixed(1)}%</span></td>
+                    <td>${result.experience_years} years</td>
+                    <td>${result.matched_skills.slice(0, 3).join(', ')}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function exportCSV() {
+            let csv = 'Rank,Name,Email,Phone,Score,Experience,Matched Skills\n';
+            resultsData.forEach((r, i) => {
+                csv += `${i+1},"${r.name}","${r.email}","${r.phone}",${r.total_score},${r.experience_years},"${r.matched_skills.join(', ')}"\n`;
+            });
+            downloadFile(csv, 'results.csv', 'text/csv');
+        }
+
+        function exportJSON() {
+            const json = JSON.stringify(resultsData, null, 2);
+            downloadFile(json, 'results.json', 'application/json');
+        }
+
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type} show`;
+            setTimeout(() => alert.classList.remove('show'), 5000);
+        }
+
+        function logout() {
+            window.location.href = 'auth/login.html';
+        }
+
+        // Load user info
+        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+        if (user.username) {
+            document.getElementById('username').textContent = user.username;
+        }
+    </script>
+</body>
+</html>

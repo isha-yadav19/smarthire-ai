@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartHire.AI - Recruiter Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(99,102,241,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.06) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.container{display:flex;height:100vh;position:relative;z-index:1;}
+
+/* Sidebar */
+.sidebar{width:260px;background:rgba(15,15,20,.95);backdrop-filter:blur(10px);border-right:1px solid rgba(99,102,241,.15);padding:24px;display:flex;flex-direction:column;}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.logo-text{font-size:1.1rem;font-weight:600;letter-spacing:-.01em;}
+.logo-text span{color:#818cf8;}
+.nav-section{font-size:.65rem;font-weight:500;color:rgba(255,255,255,.25);letter-spacing:.08em;text-transform:uppercase;padding:0 16px;margin:16px 0 8px;}
+.nav-item{padding:11px 16px;margin:3px 0;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.5);font-size:.85rem;font-weight:500;transition:all .2s;border:1px solid transparent;}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;}
+.nav-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.8);}
+.nav-item.active{background:rgba(99,102,241,.18);color:#a5b4fc;border-color:rgba(99,102,241,.3);}
+.nav-logout{margin-top:auto;padding:11px 16px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:12px;color:rgba(239,68,68,.6);font-size:.85rem;font-weight:500;transition:all .2s;border:1px solid transparent;}
+.nav-logout:hover{background:rgba(239,68,68,.1);color:#fca5a5;border-color:rgba(239,68,68,.2);}
+.nav-logout svg{width:17px;height:17px;}
+
+/* User badge in sidebar */
+.user-badge{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;margin-bottom:24px;}
+.user-avatar{width:34px;height:34px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.85rem;flex-shrink:0;}
+.user-info{overflow:hidden;}
+.user-name{font-size:.82rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:.68rem;color:#818cf8;font-weight:400;}
+
+/* Main */
+.main{flex:1;overflow-y:auto;padding:32px 36px;}
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
+.page-title{font-size:1.6rem;font-weight:600;letter-spacing:-.02em;}
+.page-sub{font-size:.82rem;color:rgba(255,255,255,.4);margin-top:4px;}
+
+/* Sections */
+.section{display:none;}
+.section.active{display:block;}
+
+/* Cards */
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:24px;margin-bottom:20px;}
+.card-title{font-size:1rem;font-weight:600;margin-bottom:16px;color:#fff;}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:20px;transition:border-color .2s;}
+.stat-card:hover{border-color:rgba(99,102,241,.3);}
+.stat-value{font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.stat-label{font-size:.75rem;color:rgba(255,255,255,.4);margin-top:6px;}
+
+/* Form */
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:.78rem;font-weight:500;color:rgba(255,255,255,.5);letter-spacing:.03em;margin-bottom:8px;}
+.form-control{width:100%;padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:.85rem;outline:none;transition:all .2s;}
+.form-control:focus{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.06);box-shadow:0 0 0 3px rgba(99,102,241,.12);}
+.form-control::placeholder{color:rgba(255,255,255,.2);}
+textarea.form-control{min-height:120px;resize:vertical;}
+select.form-control{cursor:pointer;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+/* Buttons */
+.btn{padding:10px 22px;border-radius:8px;border:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;cursor:pointer;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.btn:hover{opacity:.88;transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.btn-sm{padding:7px 14px;font-size:.75rem;}
+.btn-outline{background:transparent;border:1px solid rgba(99,102,241,.4);color:#a5b4fc;}
+.btn-outline:hover{background:rgba(99,102,241,.1);}
+.btn-danger{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;}
+.btn-danger:hover{background:rgba(239,68,68,.25);}
+
+/* File upload */
+.file-upload{border:2px dashed rgba(99,102,241,.25);border-radius:10px;padding:36px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(99,102,241,.03);}
+.file-upload:hover{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.07);}
+.file-upload-icon{font-size:2.2rem;margin-bottom:10px;}
+.file-upload-text{font-size:.88rem;color:rgba(255,255,255,.6);margin-bottom:4px;}
+.file-upload-hint{font-size:.75rem;color:rgba(255,255,255,.3);}
+.file-count{margin-top:12px;padding:10px 14px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);border-radius:8px;font-size:.82rem;color:#a5b4fc;text-align:center;}
+
+/* Job items */
+.job-item{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:18px 20px;margin-bottom:12px;transition:all .2s;}
+.job-item:hover{border-color:rgba(99,102,241,.3);background:rgba(99,102,241,.04);}
+.job-item-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:10px;}
+.job-title{font-size:.95rem;font-weight:600;color:#fff;}
+.job-meta{font-size:.78rem;color:rgba(255,255,255,.4);margin-top:3px;}
+.skill-tag{display:inline-block;padding:3px 10px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:20px;margin:3px 3px 3px 0;font-size:.72rem;color:#a5b4fc;}
+
+/* Results */
+.result-item{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:18px 20px;margin-bottom:10px;transition:all .2s;}
+.result-item:hover{border-color:rgba(99,102,241,.3);}
+.result-rank{font-size:.7rem;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;}
+.result-name{font-size:1rem;font-weight:600;color:#fff;}
+.result-meta{font-size:.78rem;color:rgba(255,255,255,.4);margin-top:3px;}
+.result-score{font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.score-label{font-size:.7rem;color:rgba(255,255,255,.4);margin-top:2px;}
+.score-breakdown{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;}
+.score-pill{padding:3px 10px;border-radius:20px;font-size:.72rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.5);}
+
+/* Progress */
+.progress-wrap{margin:20px 0;}
+.progress-bar{height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:3px;transition:width .4s ease;}
+.progress-text{font-size:.78rem;color:rgba(255,255,255,.4);margin-top:8px;text-align:center;}
+
+/* Alert */
+.alert{padding:12px 16px;border-radius:8px;font-size:.82rem;margin-bottom:16px;display:none;}
+.alert.show{display:block;}
+.alert-success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#86efac;}
+.alert-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5;}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:500;}
+.badge-green{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:#4ade80;}
+.badge-blue{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);color:#60a5fa;}
+.badge-yellow{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.25);color:#fbbf24;}
+
+/* ATS score circle */
+.ats-circle-wrap{text-align:center;padding:20px 0;}
+.ats-score-big{font-size:3.5rem;font-weight:700;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.ats-score-sub{font-size:.82rem;color:rgba(255,255,255,.4);margin-top:6px;}
+.score-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.score-bar-label{font-size:.78rem;color:rgba(255,255,255,.5);width:130px;flex-shrink:0;}
+.score-bar-track{flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;}
+.score-bar-fill{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:3px;}
+.score-bar-val{font-size:.78rem;color:#818cf8;width:36px;text-align:right;flex-shrink:0;}
+
+@media(max-width:900px){
+  .sidebar{width:220px;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    </div>
+    <div class="logo-text">SmartHire<span>.AI</span></div>
+  </div>
+
+  <div class="user-badge">
+    <div class="user-avatar" id="sideAvatar">R</div>
+    <div class="user-info">
+      <div class="user-name" id="sideUsername">Recruiter</div>
+      <div class="user-role">Recruiter Account</div>
+    </div>
+  </div>
+
+  <div class="nav-section">Main</div>
+  <div class="nav-item active" onclick="show('dashboard',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="nav-item" onclick="show('postjob',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Post a Job
+  </div>
+  <div class="nav-item" onclick="show('screen',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    Screen Resumes
+  </div>
+  <div class="nav-item" onclick="show('ats',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    ATS Analyzer
+  </div>
+
+  <div class="nav-item" onclick="show('applications',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Applications
+  </div>
+
+  <div class="nav-section">Account</div>
+  <div class="nav-item" onclick="show('profile',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Profile
+  </div>
+
+  <div class="nav-logout" onclick="logout()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    Logout
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+  <div id="alert" class="alert"></div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="section active">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Welcome back, <span id="headerUsername">Recruiter</span></div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="statJobs">0</div>
+        <div class="stat-label">Jobs Posted</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statScreened">0</div>
+        <div class="stat-label">Resumes Screened</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">90%</div>
+        <div class="stat-label">Match Accuracy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">2-5/s</div>
+        <div class="stat-label">Processing Speed</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Recent Jobs</div>
+      <div id="dashJobs"><p style="color:rgba(255,255,255,.3);font-size:.85rem;">No jobs posted yet. <span style="color:#818cf8;cursor:pointer;" onclick="show('postjob', document.querySelectorAll('.nav-item')[1])">Post your first job →</span></p></div>
+    </div>
+  </div>
+
+  <!-- POST JOB -->
+  <div id="postjob" class="section">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Post a Job</div>
+        <div class="page-sub">Create a new job listing to start screening candidates</div>
+      </div>
+    </div>
+    <div class="card">
+      <form id="jobForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Job Title</label>
+            <input class="form-control" id="jobTitle" placeholder="e.g. Senior Python Developer" required>
+          </div>
+          <div class="form-group">
+            <label>Company</label>
+            <input class="form-control" id="company" placeholder="e.g. TechCorp Inc." required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Location</label>
+            <input class="form-control" id="location" placeholder="e.g. Remote / New York, NY">
+          </div>
+          <div class="form-group">
+            <label>Salary Range</label>
+            <input class="form-control" id="salary" placeholder="e.g. $100k – $140k">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Required Skills <span style="color:rgba(255,255,255,.3);font-weight:400;">(comma separated)</span></label>
+            <input class="form-control" id="skills" placeholder="Python, Django, PostgreSQL, Docker">
+          </div>
+          <div class="form-group">
+            <label>Min. Experience (years)</label>
+            <input type="number" class="form-control" id="exp" value="0" min="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Job Description</label>
+          <textarea class="form-control" id="desc" placeholder="Describe the role, responsibilities, and requirements..."></textarea>
+        </div>
+        <button type="submit" class="btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Post Job
+        </button>
+      </form>
+    </div>
+    <div id="jobsList"></div>
+  </div>
+
+  <!-- SCREEN RESUMES -->
+  <div id="screen" class="section">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Screen Resumes</div>
+        <div class="page-sub">Upload resumes and match them against a job description</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="form-group">
+        <label>Select Job</label>
+        <select id="jobSelect" class="form-control">
+          <option value="">— Choose a job —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Or paste Job Description directly</label>
+        <textarea class="form-control" id="manualJD" placeholder="Paste job description here if not selecting from list..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Upload Resumes</label>
+        <div class="file-upload" onclick="document.getElementById('resumes').click()">
+          <input type="file" id="resumes" multiple accept=".pdf,.docx" style="display:none;" onchange="onFilesSelected(this)">
+          <div class="file-upload-icon">📄</div>
+          <div class="file-upload-text">Click to upload resumes</div>
+          <div class="file-upload-hint">PDF or DOCX — up to 500 files supported</div>
+        </div>
+        <div id="fileCount" style="display:none;" class="file-count"></div>
+      </div>
+      <div class="form-row" style="max-width:400px;">
+        <div class="form-group">
+          <label>Top N Results</label>
+          <input type="number" class="form-control" id="topN" value="10" min="1" max="100">
+        </div>
+        <div class="form-group">
+          <label>Min Score (%)</label>
+          <input type="number" class="form-control" id="minScore" value="0" min="0" max="100">
+        </div>
+      </div>
+      <button class="btn" onclick="screenResumes()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Start Screening
+      </button>
+    </div>
+
+    <div id="progressWrap" style="display:none;" class="card">
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <div class="progress-text" id="progressText">Processing...</div>
+      </div>
+    </div>
+
+    <div id="screenResults"></div>
+  </div>
+
+  <!-- ATS ANALYZER -->
+  <div id="ats" class="section">
+    <div class="page-header">
+      <div>
+        <div class="page-title">ATS Analyzer</div>
+        <div class="page-sub">Check how well a resume matches a job description</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="form-group">
+        <label>Upload Resume</label>
+        <div class="file-upload" onclick="document.getElementById('atsFile').click()">
+          <input type="file" id="atsFile" accept=".pdf,.docx" style="display:none;" onchange="onATSFileSelected(this)">
+          <div class="file-upload-icon">📄</div>
+          <div class="file-upload-text">Click to upload resume</div>
+          <div class="file-upload-hint">PDF or DOCX</div>
+        </div>
+        <div id="atsFileInfo" style="display:none;" class="file-count"></div>
+      </div>
+      <div class="form-group">
+        <label>Job Description</label>
+        <textarea class="form-control" id="atsJD" placeholder="Paste the job description to compare against..."></textarea>
+      </div>
+      <button class="btn" onclick="analyzeATS()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analyze ATS Score
+      </button>
+    </div>
+    <div id="atsResults"></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="profile" class="section">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Profile</div>
+        <div class="page-sub">Manage your recruiter account settings</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input class="form-control" id="profName">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input class="form-control" id="profEmail">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Company</label>
+          <input class="form-control" id="profCompany" placeholder="Your company name">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input class="form-control" id="profPhone" placeholder="+1 234 567 8900">
+        </div>
+      </div>
+      <button class="btn" onclick="saveProfile()">Save Profile</button>
+    </div>
+  </div>
+  <!-- APPLICATIONS -->
+  <div id="applications" class="section">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Applications</div>
+        <div class="page-sub">Candidates who applied for your jobs</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <select id="appJobFilter" class="form-control" style="width:220px;" onchange="loadApplications()">
+          <option value="">All Jobs</option>
+        </select>
+        <button class="btn btn-sm btn-outline" onclick="loadApplications()">Refresh</button>
+      </div>
+    </div>
+    <div id="appList"></div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /container -->
+
+<script>
+const API = window.location.origin+'/api';
+let jobs = [];
+let user = JSON.parse(sessionStorage.getItem('user') || '{}');
+
+// Redirect if not logged in
+if (!user.username) window.location.href = 'auth/landing.html';
+
+// Init user info
+document.getElementById('sideAvatar').textContent = user.username[0].toUpperCase();
+document.getElementById('sideUsername').textContent = user.username;
+document.getElementById('headerUsername').textContent = user.username;
+document.getElementById('profName').value = user.username || '';
+document.getElementById('profEmail').value = user.email || '';
+
+// Load jobs from data file
+fetch('data/jobs.json').then(r=>r.json()).then(d=>{jobs=d.jobs||[];renderJobs();}).catch(()=>{});
+
+function renderJobs() {
+  document.getElementById('statJobs').textContent = jobs.length;
+  const html = jobs.map(j=>`
+    <div class="job-item">
+      <div class="job-item-header">
+        <div>
+          <div class="job-title">${j.title}</div>
+          <div class="job-meta">🏢 ${j.company} &nbsp;|&nbsp; 📍 ${j.location} &nbsp;|&nbsp; 💰 ${j.salary||'N/A'} &nbsp;|&nbsp; ${j.experience}+ yrs exp</div>
+        </div>
+        <span class="badge badge-green">Active</span>
+      </div>
+      <div>${(j.required_skills||[]).map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>
+    </div>`).join('') || '<p style="color:rgba(255,255,255,.3);font-size:.85rem;">No jobs yet.</p>';
+  document.getElementById('jobsList').innerHTML = html;
+  document.getElementById('dashJobs').innerHTML = html;
+  const sel = document.getElementById('jobSelect');
+  sel.innerHTML = '<option value="">— Choose a job —</option>' + jobs.map(j=>`<option value="${j.id}">${j.title} @ ${j.company}</option>`).join('');
+  // also populate applications filter
+  const appSel = document.getElementById('appJobFilter');
+  appSel.innerHTML = '<option value="">All Jobs</option>' + jobs.map(j=>`<option value="${j.id}">${j.title} @ ${j.company}</option>`).join('');
+}
+
+document.getElementById('jobForm').onsubmit = e => {
+  e.preventDefault();
+  const job = {
+    id: Date.now(),
+    title: document.getElementById('jobTitle').value,
+    company: document.getElementById('company').value,
+    location: document.getElementById('location').value,
+    salary: document.getElementById('salary').value,
+    required_skills: document.getElementById('skills').value.split(',').map(s=>s.trim()).filter(Boolean),
+    experience: parseInt(document.getElementById('exp').value)||0,
+    description: document.getElementById('desc').value,
+    posted_date: new Date().toISOString().split('T')[0]
+  };
+  jobs.push(job);
+  renderJobs();
+  e.target.reset();
+  showAlert('Job posted successfully!', 'success');
+};
+
+function onFilesSelected(input) {
+  const n = input.files.length;
+  const fc = document.getElementById('fileCount');
+  fc.style.display = 'block';
+  fc.textContent = `${n} file${n!==1?'s':''} selected`;
+}
+
+function onATSFileSelected(input) {
+  const fi = document.getElementById('atsFileInfo');
+  fi.style.display = 'block';
+  fi.textContent = input.files[0]?.name || '';
+}
+
+function screenResumes() {
+  const files = document.getElementById('resumes').files;
+  const jobId = document.getElementById('jobSelect').value;
+  const manualJD = document.getElementById('manualJD').value.trim();
+  const topN = parseInt(document.getElementById('topN').value)||10;
+  const minScore = parseFloat(document.getElementById('minScore').value)||0;
+
+  if (!files.length) return showAlert('Please upload at least one resume.', 'error');
+
+  let jdText = manualJD;
+  if (!jdText && jobId) {
+    const job = jobs.find(j=>j.id==jobId);
+    if (job) jdText = `${job.title}\n\nRequired Skills:\n${job.required_skills.join('\n')}\n\nExperience: ${job.experience}+ years\n\n${job.description}`;
+  }
+  if (!jdText) return showAlert('Please select a job or paste a job description.', 'error');
+
+  const prog = document.getElementById('progressWrap');
+  const fill = document.getElementById('progressFill');
+  const txt = document.getElementById('progressText');
+  const results = document.getElementById('screenResults');
+  prog.style.display = 'block';
+  results.innerHTML = '';
+  fill.style.width = '10%';
+  txt.textContent = `Uploading ${files.length} resumes...`;
+
+  const fd = new FormData();
+  Array.from(files).forEach(f => fd.append('files', f));
+
+  fetch(`${API}/upload`, {method:'POST', body:fd})
+    .then(r=>r.json())
+    .then(up => {
+      if (!up.success) throw new Error(up.message||'Upload failed');
+      fill.style.width = '50%';
+      txt.textContent = `Processing ${up.count} resumes...`;
+      return fetch(`${API}/process`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({job_description:jdText, top_n:topN, min_score:minScore})
+      });
+    })
+    .then(r=>r.json())
+    .then(data => {
+      if (!data.success) throw new Error(data.message||'Processing failed');
+      fill.style.width = '100%';
+      txt.textContent = 'Complete!';
+      document.getElementById('statScreened').textContent = data.total_processed;
+      setTimeout(()=>{ prog.style.display='none'; }, 1500);
+
+      results.innerHTML = `
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div class="card-title" style="margin:0;">Top ${data.results.length} Matches &nbsp;<span style="font-size:.78rem;color:rgba(255,255,255,.3);font-weight:400;">(${data.total_processed} processed)</span></div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm btn-outline" onclick="exportCSV()">Export CSV</button>
+              <button class="btn btn-sm btn-outline" onclick="exportJSON()">Export JSON</button>
+            </div>
+          </div>
+          ${data.results.map((r,i)=>`
+          <div class="result-item">
+            <div style="display:flex;justify-content:space-between;align-items:start;gap:16px;">
+              <div style="flex:1;">
+                <div class="result-rank">Rank #${i+1}</div>
+                <div class="result-name">${r.name}</div>
+                <div class="result-meta">${r.email||'—'} &nbsp;|&nbsp; ${r.phone||'—'} &nbsp;|&nbsp; ${r.experience_years} yrs exp</div>
+                <div style="margin-top:10px;">${(r.matched_skills||[]).slice(0,6).map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>
+                <div class="score-breakdown">
+                  <span class="score-pill">Skills ${r.scores.required_skills}%</span>
+                  <span class="score-pill">Preferred ${r.scores.preferred_skills}%</span>
+                  <span class="score-pill">Exp ${r.scores.experience}%</span>
+                  <span class="score-pill">Keywords ${r.scores.keyword}%</span>
+                </div>
+              </div>
+              <div style="text-align:right;flex-shrink:0;">
+                <div class="result-score">${r.total_score}%</div>
+                <div class="score-label">Match Score</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px;">
+              <button onclick="setStatus(${i},'Shortlisted')" id="btn-shortlist-${i}" style="padding:6px 14px;border-radius:6px;border:1px solid rgba(34,197,94,.3);background:rgba(34,197,94,.15);color:#4ade80;cursor:pointer;font-size:.75rem;font-weight:600;">✓ Shortlist</button>
+              <button onclick="setStatus(${i},'Rejected')" id="btn-reject-${i}" style="padding:6px 14px;border-radius:6px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.15);color:#fca5a5;cursor:pointer;font-size:.75rem;font-weight:600;">✗ Reject</button>
+              <span id="status-${i}" style="font-size:.75rem;padding:6px 10px;border-radius:6px;display:none;"></span>
+            </div>
+          </div>`).join('')}
+        </div>`;
+      window._lastResults = data.results;
+      // Clear uploads now that results are shown
+      fetch(`${API}/clear-uploads`, {method:'POST'});
+    })
+    .catch(err => {
+      prog.style.display = 'none';
+      results.innerHTML = `<div class="card"><p style="color:#fca5a5;">❌ ${err.message}</p><p style="color:rgba(255,255,255,.4);font-size:.8rem;margin-top:8px;">Make sure the API server is running: <code style="color:#818cf8;">python api_server.py</code></p></div>`;
+    });
+}
+
+function analyzeATS() {
+  const file = document.getElementById('atsFile').files[0];
+  const jd = document.getElementById('atsJD').value.trim();
+  if (!file || !jd) return showAlert('Upload a resume and enter a job description.', 'error');
+
+  const fd = new FormData();
+  fd.append('files', file);
+
+  fetch(`${API}/upload`, {method:'POST', body:fd})
+    .then(r=>r.json())
+    .then(up => {
+      if (!up.success) throw new Error(up.message);
+      return fetch(`${API}/process`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({job_description:jd, top_n:1, min_score:0})
+      });
+    })
+    .then(r=>r.json())
+    .then(data => {
+      if (!data.success || !data.results.length) throw new Error(data.message||'No results');
+      const r = data.results[0];
+      document.getElementById('atsResults').innerHTML = `
+        <div class="card">
+          <div class="ats-circle-wrap">
+            <div class="ats-score-big">${r.total_score}%</div>
+            <div class="ats-score-sub">ATS Compatibility Score</div>
+          </div>
+          <div style="margin-top:20px;">
+            <div class="score-bar-row"><div class="score-bar-label">Required Skills</div><div class="score-bar-track"><div class="score-bar-fill" style="width:${r.scores.required_skills}%"></div></div><div class="score-bar-val">${r.scores.required_skills}%</div></div>
+            <div class="score-bar-row"><div class="score-bar-label">Preferred Skills</div><div class="score-bar-track"><div class="score-bar-fill" style="width:${r.scores.preferred_skills}%"></div></div><div class="score-bar-val">${r.scores.preferred_skills}%</div></div>
+            <div class="score-bar-row"><div class="score-bar-label">Experience</div><div class="score-bar-track"><div class="score-bar-fill" style="width:${r.scores.experience}%"></div></div><div class="score-bar-val">${r.scores.experience}%</div></div>
+            <div class="score-bar-row"><div class="score-bar-label">Keywords</div><div class="score-bar-track"><div class="score-bar-fill" style="width:${r.scores.keyword}%"></div></div><div class="score-bar-val">${r.scores.keyword}%</div></div>
+          </div>
+          <div style="margin-top:20px;">
+            <div style="font-size:.82rem;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:10px;">Matched Skills</div>
+            <div>${(r.matched_skills||[]).map(s=>`<span class="skill-tag">${s}</span>`).join('')||'<span style="color:rgba(255,255,255,.3);font-size:.82rem;">None found</span>'}</div>
+          </div>
+          ${r.missing_skills?.length ? `<div style="margin-top:16px;"><div style="font-size:.82rem;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:10px;">Missing Skills</div><div>${r.missing_skills.map(s=>`<span style="padding:3px 10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:20px;margin:3px;display:inline-block;font-size:.72rem;color:#fca5a5;">${s}</span>`).join('')}</div></div>` : ''}
+        </div>`;
+    })
+    .catch(err => {
+      document.getElementById('atsResults').innerHTML = `<div class="card"><p style="color:#fca5a5;">❌ ${err.message}</p></div>`;
+    });
+}
+
+function setStatus(i, status) {
+  const r = window._lastResults[i];
+  r._status = status;
+  const span = document.getElementById(`status-${i}`);
+  span.style.display = 'inline-block';
+  span.textContent = status === 'Shortlisted' ? '✓ Shortlisted' : '✗ Rejected';
+  span.style.background = status === 'Shortlisted' ? 'rgba(34,197,94,.15)' : 'rgba(239,68,68,.15)';
+  span.style.color = status === 'Shortlisted' ? '#4ade80' : '#fca5a5';
+  document.getElementById(`btn-shortlist-${i}`).style.opacity = status === 'Shortlisted' ? '1' : '.4';
+  document.getElementById(`btn-reject-${i}`).style.opacity = status === 'Rejected' ? '1' : '.4';
+}
+
+function exportCSV() {
+  if (!window._lastResults?.length) return;
+  const rows = [['Rank','Name','Email','Phone','Score','Experience','Matched Skills','Status']];
+  window._lastResults.forEach((r,i) => rows.push([i+1, r.name, r.email, r.phone, r.total_score+'%', r.experience_years+' yrs', r.matched_skills.join('; '), r._status||'']));
+  const csv = rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  download(csv, 'results.csv', 'text/csv');
+}
+
+function exportJSON() {
+  if (!window._lastResults?.length) return;
+  const out = window._lastResults.map((r,i) => ({...r, status: r._status||''}));
+  download(JSON.stringify(out, null, 2), 'results.json', 'application/json');
+}
+
+function download(content, filename, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type}));
+  a.download = filename;
+  a.click();
+}
+
+function saveProfile() { showAlert('Profile saved!', 'success'); }
+
+function loadApplications() {
+  const jobId = document.getElementById('appJobFilter').value;
+  const url = jobId ? `${API}/applications?job_id=${jobId}` : `${API}/applications`;
+  document.getElementById('appList').innerHTML = '<p style="color:rgba(255,255,255,.4);font-size:.85rem;">Loading...</p>';
+  fetch(url)
+    .then(r=>r.json())
+    .then(data => {
+      if (!data.success) throw new Error(data.message);
+      const apps = data.applications;
+      if (!apps.length) {
+        document.getElementById('appList').innerHTML = '<div class="card"><p style="color:rgba(255,255,255,.3);font-size:.85rem;">No applications yet.</p></div>';
+        return;
+      }
+      document.getElementById('appList').innerHTML = `
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div class="card-title" style="margin:0;">${apps.length} Application${apps.length!==1?'s':''}</div>
+          </div>
+          ${apps.map(a=>`
+          <div class="result-item">
+            <div style="display:flex;justify-content:space-between;align-items:start;gap:16px;">
+              <div style="flex:1;">
+                <div class="result-name">${a.candidate_name}</div>
+                <div class="result-meta">${a.candidate_email} &nbsp;|&nbsp; Applied ${a.applied_date}</div>
+                <div style="margin-top:6px;font-size:.8rem;color:rgba(255,255,255,.5);">📋 ${a.job_title} @ ${a.company}</div>
+                ${a.missing_skills&&a.missing_skills.length?`<div style="margin-top:8px;"><span style="font-size:.72rem;color:rgba(255,255,255,.3);">Missing: </span>${a.missing_skills.slice(0,4).map(s=>`<span style="padding:2px 8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:20px;font-size:.68rem;color:#fca5a5;margin:2px;display:inline-block;">${s}</span>`).join('')}</div>`:''}
+                <div style="display:flex;gap:8px;margin-top:12px;">
+                  <button onclick="updateAppStatus(${a.id},'Shortlisted',this)" style="padding:6px 14px;border-radius:6px;border:1px solid rgba(34,197,94,.3);background:rgba(34,197,94,.15);color:#4ade80;cursor:pointer;font-size:.75rem;font-weight:600;${a.status==='Shortlisted'?'opacity:1':'opacity:.5'}">✓ Shortlist</button>
+                  <button onclick="updateAppStatus(${a.id},'Rejected',this)" style="padding:6px 14px;border-radius:6px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.15);color:#fca5a5;cursor:pointer;font-size:.75rem;font-weight:600;${a.status==='Rejected'?'opacity:1':'opacity:.5'}">✗ Reject</button>
+                  <span style="font-size:.75rem;padding:6px 10px;border-radius:6px;${a.status==='Shortlisted'?'background:rgba(34,197,94,.15);color:#4ade80;':a.status==='Rejected'?'background:rgba(239,68,68,.15);color:#fca5a5;':'background:rgba(251,191,36,.12);color:#fbbf24;'}">${a.status}</span>
+                </div>
+              </div>
+              <div style="text-align:right;flex-shrink:0;">
+                <div class="result-score">${a.match_percentage}%</div>
+                <div class="score-label">Match</div>
+              </div>
+            </div>
+          </div>`).join('')}
+        </div>`;
+    })
+    .catch(err => {
+      document.getElementById('appList').innerHTML = `<div class="card"><p style="color:#fca5a5;">Error: ${err.message}</p></div>`;
+    });
+}
+
+function updateAppStatus(appId, status, btn) {
+  fetch(`${API}/applications/${appId}/status`, {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({status})
+  }).then(()=>loadApplications());
+}
+
+function show(s, el) {
+  document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById(s).classList.add('active');
+  if (el) el.classList.add('active');
+  else {
+    // find matching nav item by onclick attribute
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes(`'${s}'`)) n.classList.add('active');
+    });
+  }
+  if (s === 'applications') loadApplications();
+}
+
+function showAlert(msg, type) {
+  const a = document.getElementById('alert');
+  a.textContent = msg;
+  a.className = `alert alert-${type} show`;
+  setTimeout(()=>a.classList.remove('show'), 4000);
+}
+
+function logout() { sessionStorage.clear(); location.href = 'auth/landing.html'; }
+</script>
+</body>
+</html>
+

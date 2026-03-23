@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Candidate Profile - SmartHire.AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+
+  body {
+    min-height:100vh;
+    background:#0a0a0f;
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(99,102,241,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,.06) 1px, transparent 1px);
+    background-size:40px 40px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .container {
+    max-width:1400px;
+    margin:0 auto;
+    padding:20px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* Header */
+  .header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 0;
+    margin-bottom:30px;
+  }
+
+  .logo {
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .logo-icon {
+    width:32px;
+    height:32px;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .logo-icon svg { width:16px; height:16px; }
+
+  .logo-text {
+    font-size:1rem;
+    font-weight:600;
+    color:#fff;
+  }
+
+  .logo-text span { color:#818cf8; }
+
+  .header-right {
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+
+  .user-info {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:8px 16px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:8px;
+  }
+
+  .user-avatar {
+    width:36px;
+    height:36px;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:600;
+    color:#fff;
+    font-size:.9rem;
+  }
+
+  .user-name {
+    font-size:.85rem;
+    color:#fff;
+    font-weight:500;
+  }
+
+  .btn-logout {
+    padding:8px 16px;
+    background:rgba(239,68,68,.1);
+    border:1px solid rgba(239,68,68,.3);
+    border-radius:8px;
+    color:#fca5a5;
+    font-size:.8rem;
+    font-weight:500;
+    cursor:pointer;
+    transition:all .2s;
+  }
+
+  .btn-logout:hover {
+    background:rgba(239,68,68,.2);
+  }
+
+  /* Main Grid */
+  .main-grid {
+    display:grid;
+    grid-template-columns:300px 1fr;
+    gap:24px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  .profile-card {
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:12px;
+    padding:24px;
+    text-align:center;
+  }
+
+  .profile-avatar {
+    width:80px;
+    height:80px;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    color:#fff;
+    font-size:2rem;
+    margin:0 auto 16px;
+  }
+
+  .profile-name {
+    font-size:1.2rem;
+    font-weight:600;
+    color:#fff;
+    margin-bottom:4px;
+  }
+
+  .profile-email {
+    font-size:.8rem;
+    color:rgba(255,255,255,.4);
+    margin-bottom:16px;
+  }
+
+  .profile-stats {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:16px;
+  }
+
+  .stat-box {
+    background:rgba(99,102,241,.1);
+    border:1px solid rgba(99,102,241,.25);
+    border-radius:8px;
+    padding:12px;
+  }
+
+  .stat-value {
+    font-size:1.5rem;
+    font-weight:700;
+    color:#818cf8;
+    line-height:1;
+  }
+
+  .stat-label {
+    font-size:.7rem;
+    color:rgba(255,255,255,.4);
+    margin-top:4px;
+  }
+
+  .nav-menu {
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:12px;
+    padding:8px;
+  }
+
+  .nav-item {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 16px;
+    color:rgba(255,255,255,.5);
+    font-size:.85rem;
+    font-weight:500;
+    border-radius:8px;
+    cursor:pointer;
+    transition:all .2s;
+    margin-bottom:4px;
+  }
+
+  .nav-item:hover {
+    background:rgba(255,255,255,.05);
+    color:rgba(255,255,255,.8);
+  }
+
+  .nav-item.active {
+    background:rgba(99,102,241,.15);
+    color:#a5b4fc;
+  }
+
+  .nav-item svg {
+    width:18px;
+    height:18px;
+  }
+
+  /* Content Area */
+  .content {
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+
+  .section {
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:12px;
+    padding:24px;
+  }
+
+  .section-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+  }
+
+  .section-title {
+    font-size:1.1rem;
+    font-weight:600;
+    color:#fff;
+  }
+
+  .btn-primary {
+    padding:8px 16px;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    border:none;
+    border-radius:8px;
+    color:#fff;
+    font-size:.8rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:opacity .2s;
+  }
+
+  .btn-primary:hover {
+    opacity:.88;
+  }
+
+  .btn-secondary {
+    padding:8px 16px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:8px;
+    color:rgba(255,255,255,.7);
+    font-size:.8rem;
+    font-weight:500;
+    cursor:pointer;
+    transition:all .2s;
+  }
+
+  .btn-secondary:hover {
+    background:rgba(255,255,255,.07);
+  }
+
+  /* Form Fields */
+  .form-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+
+  .form-field {
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+
+  .form-field.full {
+    grid-column:1 / -1;
+  }
+
+  .form-label {
+    font-size:.8rem;
+    font-weight:500;
+    color:rgba(255,255,255,.6);
+  }
+
+  .form-input, .form-textarea, .form-select {
+    width:100%;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:8px;
+    padding:10px 14px;
+    font-family:'Inter',sans-serif;
+    font-size:.85rem;
+    color:#fff;
+    outline:none;
+    transition:all .2s;
+  }
+
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    border-color:rgba(99,102,241,.5);
+    background:rgba(99,102,241,.06);
+    box-shadow:0 0 0 3px rgba(99,102,241,.12);
+  }
+
+  .form-textarea {
+    min-height:100px;
+    resize:vertical;
+  }
+
+  .form-select {
+    cursor:pointer;
+  }
+
+  /* Skills */
+  .skills-container {
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  .skill-tag {
+    padding:6px 12px;
+    background:rgba(99,102,241,.15);
+    border:1px solid rgba(99,102,241,.3);
+    border-radius:20px;
+    font-size:.75rem;
+    color:#a5b4fc;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .skill-remove {
+    cursor:pointer;
+    opacity:.7;
+    transition:opacity .2s;
+  }
+
+  .skill-remove:hover {
+    opacity:1;
+  }
+
+  .skill-input-wrap {
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+  }
+
+  /* Resume Upload */
+  .upload-area {
+    border:2px dashed rgba(99,102,241,.3);
+    border-radius:12px;
+    padding:40px;
+    text-align:center;
+    cursor:pointer;
+    transition:all .2s;
+  }
+
+  .upload-area:hover {
+    border-color:rgba(99,102,241,.5);
+    background:rgba(99,102,241,.05);
+  }
+
+  .upload-icon {
+    width:48px;
+    height:48px;
+    background:rgba(99,102,241,.15);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 16px;
+  }
+
+  .upload-icon svg {
+    width:24px;
+    height:24px;
+    stroke:#818cf8;
+  }
+
+  .upload-text {
+    font-size:.9rem;
+    color:rgba(255,255,255,.7);
+    margin-bottom:4px;
+  }
+
+  .upload-hint {
+    font-size:.75rem;
+    color:rgba(255,255,255,.4);
+  }
+
+  .file-info {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 16px;
+    background:rgba(99,102,241,.1);
+    border:1px solid rgba(99,102,241,.25);
+    border-radius:8px;
+    margin-top:12px;
+  }
+
+  .file-name {
+    font-size:.85rem;
+    color:#a5b4fc;
+  }
+
+  .file-remove {
+    color:#fca5a5;
+    cursor:pointer;
+    font-size:.8rem;
+  }
+
+  /* Applications */
+  .application-card {
+    background:rgba(255,255,255,.02);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:10px;
+    padding:16px;
+    margin-bottom:12px;
+    transition:all .2s;
+  }
+
+  .application-card:hover {
+    background:rgba(255,255,255,.04);
+    border-color:rgba(99,102,241,.3);
+  }
+
+  .app-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:start;
+    margin-bottom:12px;
+  }
+
+  .app-title {
+    font-size:.95rem;
+    font-weight:600;
+    color:#fff;
+    margin-bottom:4px;
+  }
+
+  .app-company {
+    font-size:.8rem;
+    color:rgba(255,255,255,.5);
+  }
+
+  .app-status {
+    padding:4px 12px;
+    border-radius:12px;
+    font-size:.7rem;
+    font-weight:600;
+  }
+
+  .status-pending {
+    background:rgba(251,191,36,.15);
+    color:#fbbf24;
+  }
+
+  .status-reviewed {
+    background:rgba(59,130,246,.15);
+    color:#60a5fa;
+  }
+
+  .status-shortlisted {
+    background:rgba(34,197,94,.15);
+    color:#4ade80;
+  }
+
+  .app-details {
+    display:flex;
+    gap:16px;
+    font-size:.75rem;
+    color:rgba(255,255,255,.4);
+  }
+
+  .app-detail {
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align:center;
+    padding:60px 20px;
+  }
+
+  .empty-icon {
+    width:64px;
+    height:64px;
+    background:rgba(255,255,255,.05);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 16px;
+  }
+
+  .empty-icon svg {
+    width:32px;
+    height:32px;
+    stroke:rgba(255,255,255,.3);
+  }
+
+  .empty-text {
+    font-size:.9rem;
+    color:rgba(255,255,255,.4);
+  }
+
+  @media(max-width:1024px){
+    .main-grid{grid-template-columns:1fr;}
+    .form-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="logo-text">SmartHire<span>.AI</span></div>
+    </div>
+    <div class="header-right">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">JD</div>
+        <div class="user-name" id="userName">John Doe</div>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main-grid">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="profile-card">
+        <div class="profile-avatar" id="profileAvatar">JD</div>
+        <div class="profile-name" id="profileName">John Doe</div>
+        <div class="profile-email" id="profileEmail">john@example.com</div>
+        <div class="profile-stats">
+          <div class="stat-box">
+            <div class="stat-value" id="statApplications">0</div>
+            <div class="stat-label">Applications</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" id="statMatches">0</div>
+            <div class="stat-label">Matches</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <div class="nav-item active" onclick="showSection('profile')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          Profile
+        </div>
+        <div class="nav-item" onclick="showSection('ats')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+          ATS Analyzer
+        </div>
+        <div class="nav-item" onclick="showSection('applications')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="9" y1="9" x2="15" y2="9"/>
+            <line x1="9" y1="15" x2="15" y2="15"/>
+          </svg>
+          Applications
+        </div>
+        <div class="nav-item" onclick="showSection('settings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6m5.2-13.2l-4.2 4.2m0 6l4.2 4.2M23 12h-6m-6 0H1m18.2 5.2l-4.2-4.2m-6 0l-4.2 4.2"/>
+          </svg>
+          Settings
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Profile Section -->
+      <div id="profileSection" class="section">
+        <div class="section-header">
+          <h2 class="section-title">Personal Information</h2>
+          <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
+        </div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="inputName" placeholder="John Doe">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="inputEmail" placeholder="john@example.com">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Phone</label>
+            <input type="tel" class="form-input" id="inputPhone" placeholder="+1 234 567 8900">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Location</label>
+            <input type="text" class="form-input" id="inputLocation" placeholder="New York, USA">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Target Role</label>
+            <input type="text" class="form-input" id="inputRole" placeholder="Software Engineer">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Experience (Years)</label>
+            <input type="number" class="form-input" id="inputExperience" placeholder="3">
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Bio</label>
+            <textarea class="form-textarea" id="inputBio" placeholder="Tell us about yourself..."></textarea>
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Skills</label>
+            <div class="skills-container" id="skillsContainer">
+              <div class="skill-tag">JavaScript <span class="skill-remove" onclick="removeSkill(this)">×</span></div>
+              <div class="skill-tag">React <span class="skill-remove" onclick="removeSkill(this)">×</span></div>
+              <div class="skill-tag">Node.js <span class="skill-remove" onclick="removeSkill(this)">×</span></div>
+            </div>
+            <div class="skill-input-wrap">
+              <input type="text" class="form-input" id="skillInput" placeholder="Add a skill">
+              <button class="btn-secondary" onclick="addSkill()">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATS Analyzer Section -->
+      <div id="atsSection" class="section" style="display:none;">
+        <div class="section-header">
+          <h2 class="section-title">ATS Score Analyzer</h2>
+          <button class="btn-primary" onclick="analyzeResume()">Analyze Resume</button>
+        </div>
+        
+        <!-- Upload Resume -->
+        <div class="upload-area" onclick="document.getElementById('atsResumeFile').click()">
+          <input type="file" id="atsResumeFile" accept=".pdf,.doc,.docx" style="display:none" onchange="handleATSUpload(event)">
+          <div class="upload-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="upload-text">Upload your resume for ATS analysis</div>
+          <div class="upload-hint">PDF, DOC, DOCX (Max 5MB)</div>
+        </div>
+        
+        <div id="atsFileInfo" style="display:none;">
+          <div class="file-info">
+            <span class="file-name" id="atsFileName">resume.pdf</span>
+            <span class="file-remove" onclick="removeATSFile()">Remove</span>
+          </div>
+        </div>
+
+        <!-- ATS Score Card -->
+        <div id="atsResults" style="display:none; margin-top:24px;">
+          <!-- Overall Score -->
+          <div style="background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:24px; margin-bottom:20px;">
+            <div style="text-align:center;">
+              <div style="font-size:.9rem; color:rgba(255,255,255,.5); margin-bottom:12px;">Overall ATS Score</div>
+              <div style="width:120px; height:120px; margin:0 auto; position:relative;">
+                <svg viewBox="0 0 120 120" style="transform:rotate(-90deg);">
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="10"/>
+                  <circle id="scoreCircle" cx="60" cy="60" r="50" fill="none" stroke="#6366f1" stroke-width="10" stroke-dasharray="314" stroke-dashoffset="78.5" stroke-linecap="round"/>
+                </svg>
+                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+                  <div id="scoreValue" style="font-size:2rem; font-weight:700; color:#fff; line-height:1;">85</div>
+                  <div style="font-size:.7rem; color:rgba(255,255,255,.4); margin-top:4px;">/ 100</div>
+                </div>
+              </div>
+              <div id="scoreLabel" style="margin-top:12px; font-size:.85rem; font-weight:600; color:#4ade80;">Excellent Match</div>
+            </div>
+          </div>
+
+          <!-- Score Breakdown -->
+          <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:20px;">
+            <div style="background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:.8rem; color:rgba(255,255,255,.6);">Keywords Match</span>
+                <span style="font-size:.9rem; font-weight:600; color:#818cf8;">92%</span>
+              </div>
+              <div style="height:6px; background:rgba(255,255,255,.1); border-radius:3px; overflow:hidden;">
+                <div style="height:100%; width:92%; background:linear-gradient(90deg,#6366f1,#8b5cf6); border-radius:3px;"></div>
+              </div>
+            </div>
+
+            <div style="background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:.8rem; color:rgba(255,255,255,.6);">Skills Match</span>
+                <span style="font-size:.9rem; font-weight:600; color:#818cf8;">88%</span>
+              </div>
+              <div style="height:6px; background:rgba(255,255,255,.1); border-radius:3px; overflow:hidden;">
+                <div style="height:100%; width:88%; background:linear-gradient(90deg,#6366f1,#8b5cf6); border-radius:3px;"></div>
+              </div>
+            </div>
+
+            <div style="background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:.8rem; color:rgba(255,255,255,.6);">Format Quality</span>
+                <span style="font-size:.9rem; font-weight:600; color:#818cf8;">95%</span>
+              </div>
+              <div style="height:6px; background:rgba(255,255,255,.1); border-radius:3px; overflow:hidden;">
+                <div style="height:100%; width:95%; background:linear-gradient(90deg,#6366f1,#8b5cf6); border-radius:3px;"></div>
+              </div>
+            </div>
+
+            <div style="background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:.8rem; color:rgba(255,255,255,.6);">Experience Match</span>
+                <span style="font-size:.9rem; font-weight:600; color:#818cf8;">78%</span>
+              </div>
+              <div style="height:6px; background:rgba(255,255,255,.1); border-radius:3px; overflow:hidden;">
+                <div style="height:100%; width:78%; background:linear-gradient(90deg,#6366f1,#8b5cf6); border-radius:3px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recommendations -->
+          <div style="background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:20px;">
+            <h3 style="font-size:.95rem; font-weight:600; color:#fff; margin-bottom:16px;">Recommendations</h3>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; gap:12px; padding:12px; background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.25); border-radius:8px;">
+                <div style="color:#4ade80; font-size:1.2rem;">✓</div>
+                <div>
+                  <div style="font-size:.8rem; font-weight:600; color:#4ade80; margin-bottom:4px;">Strong Points</div>
+                  <div style="font-size:.75rem; color:rgba(255,255,255,.6); line-height:1.5;">Excellent keyword density and skills match. Your resume is well-optimized for ATS systems.</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:12px; padding:12px; background:rgba(251,191,36,.1); border:1px solid rgba(251,191,36,.25); border-radius:8px;">
+                <div style="color:#fbbf24; font-size:1.2rem;">⚠</div>
+                <div>
+                  <div style="font-size:.8rem; font-weight:600; color:#fbbf24; margin-bottom:4px;">Improvement Areas</div>
+                  <div style="font-size:.75rem; color:rgba(255,255,255,.6); line-height:1.5;">Consider adding more quantifiable achievements and metrics to strengthen your experience section.</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:12px; padding:12px; background:rgba(99,102,241,.1); border:1px solid rgba(99,102,241,.25); border-radius:8px;">
+                <div style="color:#818cf8; font-size:1.2rem;">💡</div>
+                <div>
+                  <div style="font-size:.8rem; font-weight:600; color:#818cf8; margin-bottom:4px;">Pro Tips</div>
+                  <div style="font-size:.75rem; color:rgba(255,255,255,.6); line-height:1.5;">Use action verbs at the start of bullet points. Include relevant certifications and education details.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Missing Keywords -->
+          <div style="background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:10px; padding:20px; margin-top:20px;">
+            <h3 style="font-size:.95rem; font-weight:600; color:#fff; margin-bottom:16px;">Missing Keywords</h3>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+              <span style="padding:6px 12px; background:rgba(239,68,68,.15); border:1px solid rgba(239,68,68,.3); border-radius:20px; font-size:.75rem; color:#fca5a5;">Cloud Computing</span>
+              <span style="padding:6px 12px; background:rgba(239,68,68,.15); border:1px solid rgba(239,68,68,.3); border-radius:20px; font-size:.75rem; color:#fca5a5;">Agile Methodology</span>
+              <span style="padding:6px 12px; background:rgba(239,68,68,.15); border:1px solid rgba(239,68,68,.3); border-radius:20px; font-size:.75rem; color:#fca5a5;">CI/CD</span>
+              <span style="padding:6px 12px; background:rgba(239,68,68,.15); border:1px solid rgba(239,68,68,.3); border-radius:20px; font-size:.75rem; color:#fca5a5;">Microservices</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Applications Section -->
+      <div id="applicationsSection" class="section" style="display:none;">
+        <div class="section-header">
+          <h2 class="section-title">My Applications</h2>
+        </div>
+        <div id="applicationsList">
+          <div class="application-card">
+            <div class="app-header">
+              <div>
+                <div class="app-title">Senior Software Engineer</div>
+                <div class="app-company">TechCorp Inc.</div>
+              </div>
+              <div class="app-status status-shortlisted">Shortlisted</div>
+            </div>
+            <div class="app-details">
+              <div class="app-detail">📍 Remote</div>
+              <div class="app-detail">💰 $120k - $150k</div>
+              <div class="app-detail">📅 Applied 2 days ago</div>
+            </div>
+          </div>
+
+          <div class="application-card">
+            <div class="app-header">
+              <div>
+                <div class="app-title">Full Stack Developer</div>
+                <div class="app-company">StartupXYZ</div>
+              </div>
+              <div class="app-status status-reviewed">Reviewed</div>
+            </div>
+            <div class="app-details">
+              <div class="app-detail">📍 New York, NY</div>
+              <div class="app-detail">💰 $100k - $130k</div>
+              <div class="app-detail">📅 Applied 5 days ago</div>
+            </div>
+          </div>
+
+          <div class="application-card">
+            <div class="app-header">
+              <div>
+                <div class="app-title">Frontend Engineer</div>
+                <div class="app-company">DesignCo</div>
+              </div>
+              <div class="app-status status-pending">Pending</div>
+            </div>
+            <div class="app-details">
+              <div class="app-detail">📍 San Francisco, CA</div>
+              <div class="app-detail">💰 $110k - $140k</div>
+              <div class="app-detail">📅 Applied 1 week ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Section -->
+      <div id="settingsSection" class="section" style="display:none;">
+        <div class="section-header">
+          <h2 class="section-title">Account Settings</h2>
+        </div>
+        <div class="form-grid">
+          <div class="form-field full">
+            <label class="form-label">Email Notifications</label>
+            <select class="form-select">
+              <option>All notifications</option>
+              <option>Important only</option>
+              <option>None</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Current Password</label>
+            <input type="password" class="form-input" placeholder="••••••••">
+          </div>
+          <div class="form-field">
+            <label class="form-label">New Password</label>
+            <input type="password" class="form-input" placeholder="••••••••">
+          </div>
+          <div class="form-field full">
+            <button class="btn-primary">Update Password</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Load user data from session
+  const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+  
+  if (!user.username) {
+    window.location.href = 'login.html';
+  }
+
+  // Initialize profile
+  document.getElementById('userName').textContent = user.username;
+  document.getElementById('profileName').textContent = user.username;
+  document.getElementById('profileEmail').textContent = user.email;
+  
+  const initials = user.username.split(' ').map(n => n[0]).join('').toUpperCase();
+  document.getElementById('userAvatar').textContent = initials;
+  document.getElementById('profileAvatar').textContent = initials;
+
+  // Navigation
+  function showSection(section) {
+    console.log('Switching to section:', section);
+    document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    
+    if (section === 'profile') {
+      document.getElementById('profileSection').style.display = 'block';
+      document.querySelectorAll('.nav-item')[0].classList.add('active');
+      console.log('Profile section shown');
+    } else if (section === 'ats') {
+      document.getElementById('atsSection').style.display = 'block';
+      document.querySelectorAll('.nav-item')[1].classList.add('active');
+      console.log('ATS section shown');
+    } else if (section === 'applications') {
+      document.getElementById('applicationsSection').style.display = 'block';
+      document.querySelectorAll('.nav-item')[2].classList.add('active');
+      console.log('Applications section shown');
+    } else if (section === 'settings') {
+      document.getElementById('settingsSection').style.display = 'block';
+      document.querySelectorAll('.nav-item')[3].classList.add('active');
+      console.log('Settings section shown');
+    }
+  }
+
+  // Skills management
+  function addSkill() {
+    const input = document.getElementById('skillInput');
+    const skill = input.value.trim();
+    if (skill) {
+      const container = document.getElementById('skillsContainer');
+      const tag = document.createElement('div');
+      tag.className = 'skill-tag';
+      tag.innerHTML = `${skill} <span class="skill-remove" onclick="removeSkill(this)">×</span>`;
+      container.appendChild(tag);
+      input.value = '';
+    }
+  }
+
+  function removeSkill(el) {
+    el.parentElement.remove();
+  }
+
+  // ATS File upload
+  function handleATSUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+      document.getElementById('atsFileName').textContent = file.name;
+      document.getElementById('atsFileInfo').style.display = 'block';
+    }
+  }
+
+  function removeATSFile() {
+    document.getElementById('atsResumeFile').value = '';
+    document.getElementById('atsFileInfo').style.display = 'none';
+    document.getElementById('atsResults').style.display = 'none';
+  }
+
+  function analyzeResume() {
+    const fileInput = document.getElementById('atsResumeFile');
+    if (!fileInput.files.length) {
+      alert('Please upload a resume first!');
+      return;
+    }
+    
+    // Show loading state
+    const btn = event.target;
+    btn.textContent = 'Analyzing...';
+    btn.disabled = true;
+    
+    // Simulate analysis (in real app, this would call API)
+    setTimeout(() => {
+      document.getElementById('atsResults').style.display = 'block';
+      btn.textContent = 'Analyze Resume';
+      btn.disabled = false;
+      
+      // Scroll to results
+      document.getElementById('atsResults').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 2000);
+  }
+
+  // File upload (old function - can be removed)
+  function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+      document.getElementById('fileName').textContent = file.name;
+      document.getElementById('fileInfo').style.display = 'block';
+    }
+  }
+
+  function removeFile() {
+    document.getElementById('resumeFile').value = '';
+    document.getElementById('fileInfo').style.display = 'none';
+  }
+
+  // Save profile
+  function saveProfile() {
+    alert('Profile saved successfully!');
+  }
+
+  // Logout
+  function handleLogout() {
+    sessionStorage.removeItem('user');
+    window.location.href = 'login.html';
+  }
+
+  // Enter key for skills
+  document.getElementById('skillInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addSkill();
+    }
+  });
+</script>
+
+</body>
+</html>

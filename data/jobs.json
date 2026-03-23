@@ -1,0 +1,141 @@
+{
+  "jobs": [
+    {
+      "id": 1,
+      "company": "Tech Corp",
+      "title": "Senior Python Developer",
+      "location": "San Francisco, CA",
+      "type": "Full-time",
+      "salary": "$120k - $160k",
+      "required_skills": [
+        "Python",
+        "Django",
+        "PostgreSQL",
+        "Docker",
+        "Git"
+      ],
+      "preferred_skills": [
+        "AWS",
+        "Kubernetes",
+        "React"
+      ],
+      "experience": 5,
+      "posted_date": "2024-01-15"
+    },
+    {
+      "id": 2,
+      "company": "DataTech Solutions",
+      "title": "Full Stack Developer",
+      "location": "New York, NY",
+      "type": "Full-time",
+      "salary": "$100k - $140k",
+      "required_skills": [
+        "JavaScript",
+        "React",
+        "Node.js",
+        "MongoDB",
+        "REST APIs"
+      ],
+      "preferred_skills": [
+        "TypeScript",
+        "GraphQL",
+        "Docker"
+      ],
+      "experience": 3,
+      "posted_date": "2024-01-18"
+    },
+    {
+      "id": 3,
+      "company": "Cloud Innovations",
+      "title": "DevOps Engineer",
+      "location": "Austin, TX",
+      "type": "Full-time",
+      "salary": "$110k - $150k",
+      "required_skills": [
+        "AWS",
+        "Docker",
+        "Kubernetes",
+        "Terraform",
+        "CI/CD"
+      ],
+      "preferred_skills": [
+        "Python",
+        "Ansible",
+        "Jenkins"
+      ],
+      "experience": 4,
+      "posted_date": "2024-01-20"
+    },
+    {
+      "id": 4,
+      "company": "AI Startup Inc",
+      "title": "Machine Learning Engineer",
+      "location": "Seattle, WA",
+      "type": "Full-time",
+      "salary": "$130k - $180k",
+      "required_skills": [
+        "Python",
+        "TensorFlow",
+        "PyTorch",
+        "Machine Learning",
+        "SQL"
+      ],
+      "preferred_skills": [
+        "AWS",
+        "Docker",
+        "Spark"
+      ],
+      "experience": 3,
+      "posted_date": "2024-01-22"
+    },
+    {
+      "id": 5,
+      "company": "FinTech Global",
+      "title": "Backend Developer",
+      "location": "Boston, MA",
+      "type": "Full-time",
+      "salary": "$95k - $130k",
+      "required_skills": [
+        "Java",
+        "Spring Boot",
+        "MySQL",
+        "REST APIs",
+        "Git"
+      ],
+      "preferred_skills": [
+        "Microservices",
+        "Kafka",
+        "Redis"
+      ],
+      "experience": 3,
+      "posted_date": "2024-01-25"
+    },
+    {
+      "id": 6,
+      "company": "TechCrop",
+      "title": "Senior Developer",
+      "location": "India",
+      "type": "Full-time",
+      "salary": "$4,000/mo",
+      "required_skills": ["Python"],
+      "preferred_skills": ["AWS"],
+      "experience": 1,
+      "description": "",
+      "posted_date": "2026-03-19"
+    },
+    {
+      "id": 8,
+      "company": "TechCrop",
+      "title": "Data Analyst",
+      "location": "Pune",
+      "type": "Full-time",
+      "salary": "",
+      "required_skills": ["SQL"],
+      "preferred_skills": [],
+      "experience": 1,
+      "description": "",
+      "posted_date": "2026-03-22",
+      "posted_by": "ada"
+    }
+  ]
+}

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartHire.AI - Resume Screening System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 { font-size: 36px; margin-bottom: 10px; }
+        .header p { font-size: 18px; opacity: 0.9; }
+        
+        .main { padding: 40px; }
+        
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .section h2 { 
+            margin-bottom: 20px; 
+            color: #333;
+            font-size: 24px;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            min-height: 200px;
+            resize: vertical;
+        }
+        textarea:focus { outline: none; border-color: #667eea; }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 50px;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover { 
+            background: #f0f4ff;
+            transform: scale(1.02);
+        }
+        .upload-icon { font-size: 64px; margin-bottom: 20px; }
+        
+        .file-list {
+            margin-top: 20px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .file-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e0e0e0;
+        }
+        .file-name {
+            font-weight: 500;
+            color: #333;
+        }
+        .file-size {
+            font-size: 12px;
+            color: #999;
+            margin-left: 10px;
+        }
+        .remove-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .remove-btn:hover { background: #ff3838; }
+        
+        .settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .settings label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        .settings input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .settings input:focus { outline: none; border-color: #667eea; }
+        
+        .btn {
+            padding: 18px 50px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .btn:disabled { 
+            opacity: 0.6; 
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress {
+            display: none;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        .progress-text {
+            font-size: 16px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .results {
+            display: none;
+        }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .export-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-export {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-export:hover { 
+            background: #667eea; 
+            color: white;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        tr:hover { background: #f8f9fa; }
+        tr:last-child td { border-bottom: none; }
+        
+        .score {
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .score.high { background: #d4edda; color: #155724; }
+        .score.medium { background: #fff3cd; color: #856404; }
+        .score.low { background: #f8d7da; color: #721c24; }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 500;
+        }
+        .alert.success { 
+            background: #d4edda; 
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        .alert.error { 
+            background: #f8d7da; 
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        .alert.show { display: block; }
+
+        .demo-note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .demo-note strong { color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 SmartHire.AI</h1>
+            <p>Intelligent Resume Screening System - Demo Version</p>
+        </div>
+
+        <div class="main">
+            <div class="demo-note">
+                <strong>📌 Demo Mode:</strong> This is a client-side demonstration. Upload resumes and enter job description to see the screening interface. For your exam, explain that the backend processes resumes using Python parsers, extractors, and scoring algorithms.
+            </div>
+
+            <div class="alert" id="alert"></div>
+
+            <div class="section">
+                <h2>📝 Job Description</h2>
+                <textarea id="jobDescription" placeholder="Paste your job description here...
+
+Example:
+Senior Python Developer
+
+Required Skills:
+- 5+ years Python experience
+- Django or Flask framework
+- PostgreSQL database
+- Docker containerization
+- Git version control
+
+Preferred Skills:
+- AWS cloud services
+- Kubernetes orchestration
+- React frontend
+- CI/CD pipelines
+
+Experience: 5+ years in software development
+
+Keywords: Agile, Scrum, REST APIs, Microservices"></textarea>
+            </div>
+
+            <div class="section">
+                <h2>📁 Upload Resumes</h2>
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📤</div>
+                    <div style="font-size: 18px; margin-bottom: 10px; font-weight: 600;">Click to upload resume files</div>
+                    <div style="font-size: 14px; color: #666;">PDF and DOCX files supported • Drag & drop or click to browse</div>
+                    <input type="file" id="fileInput" multiple accept=".pdf,.docx" style="display: none;">
+                </div>
+                <div class="file-list" id="fileList"></div>
+            </div>
+
+            <div class="section">
+                <h2>⚙️ Processing Settings</h2>
+                <div class="settings">
+                    <div>
+                        <label>Top N Matches</label>
+                        <input type="number" id="topN" value="10" min="1" max="100">
+                    </div>
+                    <div>
+                        <label>Minimum Score (%)</label>
+                        <input type="number" id="minScore" value="60" min="0" max="100">
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 40px 0;">
+                <button class="btn" id="processBtn" onclick="process()">🚀 Start Screening Process</button>
+            </div>
+
+            <div class="progress" id="progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Processing...</div>
+            </div>
+
+            <div class="results" id="results">
+                <div class="section">
+                    <div class="results-header">
+                        <h2>🏆 Top Matching Candidates</h2>
+                        <div class="export-btns">
+                            <button class="btn-export" onclick="exportCSV()">📊 Export CSV</button>
+                            <button class="btn-export" onclick="exportJSON()">📄 Export JSON</button>
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Candidate Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Total Score</th>
+                                    <th>Experience</th>
+                                    <th>Matched Skills</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let files = [];
+        let resultsData = [];
+
+        // File upload handling
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const newFiles = Array.from(e.target.files);
+            files = files.concat(newFiles);
+            displayFiles();
+        });
+
+        function displayFiles() {
+            const list = document.getElementById('fileList');
+            if (files.length === 0) {
+                list.innerHTML = '';
+                return;
+            }
+            
+            list.innerHTML = files.map((f, i) => `
+                <div class="file-item">
+                    <div>
+                        <span class="file-name">📄 ${f.name}</span>
+                        <span class="file-size">(${(f.size / 1024).toFixed(2)} KB)</span>
+                    </div>
+                    <button class="remove-btn" onclick="removeFile(${i})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function removeFile(i) {
+            files.splice(i, 1);
+            displayFiles();
+        }
+
+        // Simulate processing with demo data
+        async function process() {
+            const jd = document.getElementById('jobDescription').value.trim();
+            const topN = parseInt(document.getElementById('topN').value);
+            const minScore = parseFloat(document.getElementById('minScore').value);
+
+            if (!jd) {
+                showAlert('⚠️ Please enter a job description', 'error');
+                return;
+            }
+            if (files.length === 0) {
+                showAlert('⚠️ Please upload at least one resume file', 'error');
+                return;
+            }
+
+            document.getElementById('processBtn').disabled = true;
+            document.getElementById('progress').style.display = 'block';
+            
+            // Simulate processing steps
+            updateProgress(20, 'Uploading resumes...');
+            await sleep(800);
+            
+            updateProgress(40, 'Parsing PDF and DOCX files...');
+            await sleep(1000);
+            
+            updateProgress(60, 'Extracting skills and experience...');
+            await sleep(1200);
+            
+            updateProgress(80, 'Scoring and ranking candidates...');
+            await sleep(1000);
+            
+            updateProgress(100, 'Complete!');
+            
+            // Generate demo results
+            resultsData = generateDemoResults(files.length, minScore, topN);
+            displayResults(resultsData);
+            
+            showAlert(`✅ Successfully processed ${files.length} resumes! Found ${resultsData.length} matching candidates.`, 'success');
+            
+            document.getElementById('processBtn').disabled = false;
+            setTimeout(() => {
+                document.getElementById('progress').style.display = 'none';
+            }, 1500);
+        }
+
+        function generateDemoResults(count, minScore, topN) {
+            const names = ['John Smith', 'Sarah Johnson', 'Michael Chen', 'Emily Davis', 'David Wilson', 
+                          'Jessica Brown', 'Robert Taylor', 'Amanda Martinez', 'James Anderson', 'Lisa Garcia',
+                          'William Thomas', 'Jennifer Lee', 'Christopher White', 'Michelle Rodriguez', 'Daniel Martinez'];
+            const skills = ['Python', 'Django', 'Flask', 'PostgreSQL', 'Docker', 'Git', 'AWS', 'Kubernetes', 'React', 'CI/CD'];
+            
+            const results = [];
+            for (let i = 0; i < Math.min(count, topN); i++) {
+                const score = Math.max(minScore, Math.random() * 40 + 60); // 60-100
+                const exp = Math.floor(Math.random() * 8) + 2; // 2-10 years
+                const matchedSkills = skills.slice(0, Math.floor(Math.random() * 5) + 3);
+                
+                results.push({
+                    name: names[i % names.length],
+                    email: `${names[i % names.length].toLowerCase().replace(' ', '.')}@email.com`,
+                    phone: `(555) ${Math.floor(Math.random() * 900 + 100)}-${Math.floor(Math.random() * 9000 + 1000)}`,
+                    total_score: score,
+                    experience_years: exp,
+                    matched_skills: matchedSkills
+                });
+            }
+            
+            return results.sort((a, b) => b.total_score - a.total_score);
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function updateProgress(percent, text) {
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressText').textContent = text;
+        }
+
+        function displayResults(results) {
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = results.map((r, i) => {
+                const scoreClass = r.total_score >= 80 ? 'high' : r.total_score >= 60 ? 'medium' : 'low';
+                return `
+                    <tr>
+                        <td><strong>#${i + 1}</strong></td>
+                        <td>${r.name}</td>
+                        <td>${r.email}</td>
+                        <td>${r.phone}</td>
+                        <td><span class="score ${scoreClass}">${r.total_score.toFixed(1)}%</span></td>
+                        <td>${r.experience_years} years</td>
+                        <td>${r.matched_skills.join(', ')}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function exportCSV() {
+            let csv = 'Rank,Name,Email,Phone,Score,Experience,Matched Skills\n';
+            resultsData.forEach((r, i) => {
+                csv += `${i+1},"${r.name}","${r.email}","${r.phone}",${r.total_score.toFixed(1)},${r.experience_years},"${r.matched_skills.join(', ')}"\n`;
+            });
+            download(csv, 'smarthire_results.csv', 'text/csv');
+            showAlert('✅ CSV file downloaded successfully!', 'success');
+        }
+
+        function exportJSON() {
+            const json = JSON.stringify(resultsData, null, 2);
+            download(json, 'smarthire_results.json', 'application/json');
+            showAlert('✅ JSON file downloaded successfully!', 'success');
+        }
+
+        function download(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function showAlert(msg, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = msg;
+            alert.className = `alert ${type} show`;
+            setTimeout(() => alert.classList.remove('show'), 5000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SmartHire.AI - Candidate</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(99,102,241,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.06) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.container{display:flex;height:100vh;position:relative;z-index:1;}
+.sidebar{width:260px;background:rgba(15,15,20,.95);backdrop-filter:blur(10px);border-right:1px solid rgba(99,102,241,.15);padding:24px;}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.logo-text{font-size:1.1rem;font-weight:600;letter-spacing:-.01em;}
+.logo-text span{color:#818cf8;}
+.nav-item{padding:12px 16px;margin:8px 0;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.5);transition:all .2s;}
+.nav-item:hover,.nav-item.active{background:rgba(99,102,241,.18);color:#a5b4fc;border:1px solid rgba(99,102,241,.3);}
+.main{flex:1;overflow-y:auto;padding:32px;}
+.header{display:flex;justify-content:space-between;margin-bottom:32px;}
+.header h1{font-size:1.8rem;font-weight:600;}
+.btn{padding:12px 24px;border-radius:8px;border:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;cursor:pointer;font-weight:500;transition:all .2s;}
+.btn:hover{opacity:.9;}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:24px;margin:20px 0;}
+.form-group{margin:15px 0;}
+.form-group label{display:block;margin-bottom:8px;font-size:.85rem;color:rgba(255,255,255,.7);font-weight:500;}
+.form-control{width:100%;padding:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;}
+.form-control:focus{outline:none;border-color:#6366f1;background:rgba(99,102,241,.08);}
+textarea.form-control{min-height:100px;}
+.file-upload{border:2px dashed rgba(99,102,241,.3);border-radius:8px;padding:32px;text-align:center;cursor:pointer;margin:20px 0;transition:all .2s;}
+.file-upload:hover{border-color:#6366f1;background:rgba(99,102,241,.05);}
+.section{display:none;}
+.section.active{display:block;}
+.job-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:20px;margin:15px 0;cursor:pointer;transition:all .2s;}
+.job-item:hover{border-color:rgba(99,102,241,.4);background:rgba(99,102,241,.05);}
+.skill-tag{display:inline-block;padding:4px 12px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);border-radius:20px;margin:5px 5px 5px 0;font-size:.75rem;color:#a5b4fc;}
+.score{font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(4px);align-items:center;justify-content:center;z-index:1000;}
+.modal.active{display:flex;}
+.modal-content{background:#0f0f14;border:1px solid rgba(99,102,241,.2);border-radius:12px;padding:32px;max-width:640px;width:90%;max-height:90vh;overflow-y:auto;}
+.search-bar{display:flex;gap:10px;margin-bottom:20px;}
+.search-input{flex:1;padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:.85rem;outline:none;}
+.search-input:focus{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.06);}
+.search-input::placeholder{color:rgba(255,255,255,.25);}
+.filter-select{padding:11px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:rgba(255,255,255,.7);font-family:'Inter',sans-serif;font-size:.82rem;outline:none;cursor:pointer;}
+.filter-select:focus{border-color:rgba(99,102,241,.5);}
+.gap-tag{display:inline-block;padding:3px 10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:20px;margin:3px 3px 3px 0;font-size:.72rem;color:#fca5a5;}
+.match-bar-wrap{margin-top:10px;}
+.match-bar-track{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-top:4px;}
+.match-bar-fill{height:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:3px;transition:width .5s ease;}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="sidebar">
+<div class="logo">
+<div class="logo-icon">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+<circle cx="9" cy="7" r="4"/>
+</svg>
+</div>
+<div class="logo-text">SmartHire<span>.AI</span></div>
+</div>
+<div class="nav-item active" onclick="show('jobs')">Browse Jobs</div>
+<div class="nav-item" onclick="show('upload')">Upload Resume</div>
+<div class="nav-item" onclick="show('applications')">My Applications</div>
+<div class="nav-item" onclick="show('ats')">ATS Checker</div>
+<div class="nav-item" onclick="show('profile')">Profile</div>
+<div class="nav-item" style="margin-top:auto;" onclick="logout()">Logout</div>
+</div>
+<div class="main">
+<div class="header">
+<h1 id="title">Browse Jobs</h1>
+</div>
+
+<div id="jobs" class="section active">
+<div class="search-bar">
+  <input class="search-input" id="jobSearch" placeholder="🔍  Search jobs by title, company or skill..." oninput="filterJobs()">
+  <select class="filter-select" id="jobFilter" onchange="filterJobs()">
+    <option value="">All Locations</option>
+    <option value="remote">Remote</option>
+    <option value="onsite">On-site</option>
+  </select>
+</div>
+<div id="jobsList"></div>
+</div>
+
+<div id="upload" class="section">
+<div class="card">
+<h2>Upload Your Resume</h2>
+<div class="file-upload" onclick="document.getElementById('myResume').click()">
+<input type="file" id="myResume" accept=".pdf,.docx" style="display:none;">
+<div style="font-size:2rem;margin-bottom:8px;">📄</div>
+<div>Click to upload resume</div>
+<div style="font-size:.85rem;color:rgba(255,255,255,.5);margin-top:8px;">PDF or DOCX format</div>
+</div>
+<button class="btn" onclick="uploadResume()">Save Resume</button>
+</div>
+</div>
+
+<div id="applications" class="section">
+<div id="appList"></div>
+</div>
+
+<div id="ats" class="section">
+<div class="card">
+<h2>ATS Resume Checker</h2>
+<p style="color:rgba(255,255,255,.6);margin-bottom:20px;">Check how well your resume matches job requirements</p>
+<div class="form-group">
+<label>Upload Resume</label>
+<div class="file-upload" onclick="document.getElementById('atsResume').click()">
+<input type="file" id="atsResume" accept=".pdf,.docx" style="display:none;">
+<div style="font-size:2rem;margin-bottom:8px;">📄</div>
+<div>Click to upload</div>
+</div>
+</div>
+<div class="form-group">
+<label>Job Description</label>
+<textarea class="form-control" id="atsJD" placeholder="Paste job description..."></textarea>
+</div>
+<button class="btn" onclick="checkATS()">Check ATS Score</button>
+</div>
+<div id="atsResult"></div>
+</div>
+
+<div id="profile" class="section">
+<div class="card">
+<h2>Profile Settings</h2>
+<div class="form-group">
+<label>Full Name</label>
+<input class="form-control" id="profName" value="John Doe">
+</div>
+<div class="form-group">
+<label>Email</label>
+<input class="form-control" id="profEmail" value="candidate@email.com">
+</div>
+<div class="form-group">
+<label>Phone</label>
+<input class="form-control" id="profPhone" value="+1 234 567 8900">
+</div>
+<div class="form-group">
+<label>Target Role</label>
+<input class="form-control" id="profRole" value="Software Developer">
+</div>
+<div class="form-group">
+<label>Experience (years)</label>
+<input type="number" class="form-control" id="profExp" value="3">
+</div>
+<button class="btn">Save Profile</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="modal" class="modal">
+<div class="modal-content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <h2 id="modalJobTitle" style="font-size:1.2rem;font-weight:600;">Apply for Job</h2>
+    <span onclick="closeModal()" style="cursor:pointer;color:rgba(255,255,255,.4);font-size:1.4rem;line-height:1;">×</span>
+  </div>
+
+  <!-- Job details -->
+  <div id="modalJobDetails" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;margin-bottom:16px;"></div>
+
+  <!-- Skill gap section -->
+  <div id="skillGapSection" style="display:none;margin-bottom:16px;">
+    <div style="font-size:.82rem;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:10px;letter-spacing:.03em;">SKILL GAP ANALYSIS</div>
+    <div id="skillGapContent"></div>
+  </div>
+
+  <div style="font-size:.82rem;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:10px;letter-spacing:.03em;">UPLOAD RESUME</div>
+  <div class="file-upload" onclick="document.getElementById('applyResume').click()" style="margin:0 0 16px;padding:20px;">
+    <input type="file" id="applyResume" accept=".pdf,.docx" style="display:none;" onchange="onApplyFileSelected(this)">
+    <div style="font-size:1.5rem;margin-bottom:6px;">📄</div>
+    <div style="font-size:.85rem;color:rgba(255,255,255,.5);">Click to upload resume</div>
+    <div id="applyFileName" style="font-size:.78rem;color:#818cf8;margin-top:6px;"></div>
+  </div>
+  <button id="analyzeGapBtn" class="btn" onclick="analyzeSkillGap()" style="width:100%;margin-bottom:10px;background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);color:#a5b4fc;">
+    🔍 Analyze Skill Gap
+  </button>
+  <button class="btn" onclick="apply()" style="width:100%;">Submit Application</button>
+  <button class="btn" onclick="closeModal()" style="width:100%;margin-top:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);">Cancel</button>
+</div>
+</div>
+
+<script>
+const API=window.location.origin+'/api';
+let jobs=[];
+let apps=[];
+let selectedJob=null;
+let user=JSON.parse(sessionStorage.getItem('user')||'{"username":"Candidate","email":"candidate@email.com"}');
+
+// Init profile fields
+document.getElementById('profName').value=user.username||'';
+document.getElementById('profEmail').value=user.email||'';
+
+fetch('data/jobs.json').then(r=>r.json()).then(d=>{jobs=d.jobs||[];renderJobs();}).catch(()=>renderJobs());
+fetch('data/applications.json').then(r=>r.json()).then(d=>{apps=d.applications||[];renderApps();}).catch(()=>renderApps());
+
+function filterJobs(){
+  const q=document.getElementById('jobSearch').value.toLowerCase();
+  const loc=document.getElementById('jobFilter').value.toLowerCase();
+  const filtered=jobs.filter(j=>{
+    const matchQ=!q||j.title.toLowerCase().includes(q)||j.company.toLowerCase().includes(q)||(j.required_skills||[]).some(s=>s.toLowerCase().includes(q));
+    const matchL=!loc||(loc==='remote'?j.location.toLowerCase().includes('remote'):!j.location.toLowerCase().includes('remote'));
+    return matchQ&&matchL;
+  });
+  renderJobCards(filtered);
+}
+
+function renderJobs(){ renderJobCards(jobs); }
+
+function renderJobCards(list){
+  document.getElementById('jobsList').innerHTML=list.map(j=>`
+  <div class="job-item" onclick='openApply(${JSON.stringify(j).replace(/'/g,"&apos;")})'>
+    <div style="display:flex;justify-content:space-between;align-items:start;gap:12px;">
+      <div style="flex:1;">
+        <h3 style="font-size:.95rem;font-weight:600;">${j.title}</h3>
+        <p style="color:rgba(255,255,255,.5);margin:6px 0;font-size:.8rem;">🏢 ${j.company} &nbsp;|&nbsp; 📍 ${j.location} &nbsp;|&nbsp; 💰 ${j.salary||'Not specified'} &nbsp;|&nbsp; ${j.experience||0}+ yrs</p>
+        <div>${(j.required_skills||[]).map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>
+      </div>
+      <button class="btn" style="padding:8px 16px;font-size:.78rem;flex-shrink:0;" onclick='event.stopPropagation();openApply(${JSON.stringify(j).replace(/'/g,"&apos;")})'>Apply</button>
+    </div>
+  </div>`).join('')||'<p style="text-align:center;color:rgba(255,255,255,.4);padding:60px 20px;">No jobs found</p>';
+}
+
+function renderApps(){
+  document.getElementById('appList').innerHTML=apps.filter(a=>a.candidate_email===user.email).map(a=>`
+  <div class="job-item">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="flex:1;">
+        <h3 style="font-size:.95rem;font-weight:600;">${a.job_title}</h3>
+        <p style="color:rgba(255,255,255,.5);margin:6px 0;font-size:.8rem;">🏢 ${a.company} &nbsp;|&nbsp; 📅 ${a.applied_date}</p>
+        <span style="padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600;${a.status==='Shortlisted'?'background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#4ade80;':a.status==='Rejected'?'background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5;':'background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);color:#fbbf24;'}">${a.status}</span>
+      </div>
+      <div style="text-align:right;">
+        <div class="score">${a.match_percentage}%</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);">Match</div>
+      </div>
+    </div>
+    ${a.missing_skills&&a.missing_skills.length?`<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);"><span style="font-size:.75rem;color:rgba(255,255,255,.4);">Skills to improve: </span>${a.missing_skills.slice(0,5).map(s=>`<span class="gap-tag">${s}</span>`).join('')}</div>`:''}
+  </div>`).join('')||'<p style="text-align:center;color:rgba(255,255,255,.4);padding:60px 20px;">No applications yet</p>';
+}
+
+function openApply(job){
+  selectedJob=job;
+  document.getElementById('modalJobTitle').textContent='Apply — '+job.title;
+  document.getElementById('modalJobDetails').innerHTML=`
+    <div style="font-size:.9rem;font-weight:600;color:#fff;margin-bottom:6px;">${job.title}</div>
+    <div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:10px;">🏢 ${job.company} &nbsp;|&nbsp; 📍 ${job.location} &nbsp;|&nbsp; 💰 ${job.salary||'N/A'}</div>
+    <div>${(job.required_skills||[]).map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>`;
+  document.getElementById('skillGapSection').style.display='none';
+  document.getElementById('applyFileName').textContent='';
+  document.getElementById('applyResume').value='';
+  document.getElementById('modal').classList.add('active');
+}
+
+function onApplyFileSelected(input){
+  document.getElementById('applyFileName').textContent=input.files[0]?.name||'';
+}
+
+function analyzeSkillGap(){
+  const file=document.getElementById('applyResume').files[0];
+  if(!file)return alert('Upload your resume first');
+  const jdText=`${selectedJob.title}\n\nRequired Skills:\n${(selectedJob.required_skills||[]).join('\n')}\n\nExperience: ${selectedJob.experience||0}+ years\n\n${selectedJob.description||''}`;
+  const fd=new FormData();
+  fd.append('files',file);
+  document.getElementById('skillGapContent').innerHTML='<p style="color:rgba(255,255,255,.4);font-size:.82rem;">Analyzing...</p>';
+  document.getElementById('skillGapSection').style.display='block';
+  fetch(`${API}/upload`,{method:'POST',body:fd})
+  .then(r=>r.json())
+  .then(up=>{
+    if(!up.success)throw new Error(up.message);
+    return fetch(`${API}/process`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({job_description:jdText,top_n:1,min_score:0})});
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    fetch(`${API}/clear-uploads`,{method:'POST'});
+    if(!data.success||!data.results.length)throw new Error('Could not analyze');
+    const r=data.results[0];
+    const pct=r.total_score;
+    const color=pct>=75?'#4ade80':pct>=50?'#fbbf24':'#fca5a5';
+    document.getElementById('skillGapContent').innerHTML=`
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:.82rem;color:rgba(255,255,255,.6);">Overall Match</span>
+          <span style="font-size:1rem;font-weight:700;color:${color};">${pct}%</span>
+        </div>
+        <div class="match-bar-track"><div class="match-bar-fill" style="width:${pct}%;background:${pct>=75?'linear-gradient(90deg,#22c55e,#4ade80)':pct>=50?'linear-gradient(90deg,#f59e0b,#fbbf24)':'linear-gradient(90deg,#ef4444,#fca5a5)'};"></div></div>
+      </div>
+      ${r.matched_skills&&r.matched_skills.length?`
+      <div style="margin-bottom:12px;">
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:6px;">✅ You have these skills</div>
+        <div>${r.matched_skills.map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div>
+      </div>`:''}
+      ${r.missing_skills&&r.missing_skills.length?`
+      <div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:6px;">❌ Skills you're missing</div>
+        <div>${r.missing_skills.map(s=>`<span class="gap-tag">${s}</span>`).join('')}</div>
+        <div style="margin-top:10px;padding:10px 12px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:8px;font-size:.75rem;color:rgba(255,255,255,.5);line-height:1.6;">
+          💡 Consider adding these skills to your resume or upskilling before applying.
+        </div>
+      </div>`:'<div style="font-size:.82rem;color:#4ade80;">🎉 You match all required skills!</div>'}`;
+    // store for application record
+    selectedJob._analysisResult=r;
+  })
+  .catch(err=>{document.getElementById('skillGapContent').innerHTML=`<p style="color:#fca5a5;font-size:.82rem;">Error: ${err.message}</p>`;});
+}
+
+function apply(){
+  if(!document.getElementById('applyResume').files.length)return alert('Upload your resume first');
+  const r=selectedJob._analysisResult;
+  const appData={
+    job_id:selectedJob.id,
+    job_title:selectedJob.title,
+    company:selectedJob.company,
+    candidate_name:user.username,
+    candidate_email:user.email,
+    match_percentage:r?r.total_score:0,
+    missing_skills:r?r.missing_skills:[],
+    applied_date:new Date().toISOString().split('T')[0],
+    status:'Applied'
+  };
+  fetch(`${API}/apply`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(appData)})
+  .then(res=>res.json())
+  .then(d=>{
+    if(d.success){
+      apps.push({...appData,id:d.application.id});
+      renderApps();
+      closeModal();
+      show('applications');
+    } else alert('Failed to submit: '+d.message);
+  }).catch(()=>{
+    // fallback: store locally if API down
+    apps.push({...appData,id:Date.now()});
+    renderApps();
+    closeModal();
+    show('applications');
+  });
+}
+
+function uploadResume(){
+  const file=document.getElementById('myResume').files[0];
+  if(!file)return alert('Select a resume file first');
+  const fd=new FormData();
+  fd.append('files',file);
+  fetch(`${API}/upload`,{method:'POST',body:fd})
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.success){alert('✓ Resume uploaded!');sessionStorage.setItem('resumeFile',file.name);}
+    else alert('Upload failed: '+d.message);
+  }).catch(()=>alert('Upload failed. Make sure the API server is running.'));
+}
+
+function checkATS(){
+  const file=document.getElementById('atsResume').files[0];
+  const jd=document.getElementById('atsJD').value.trim();
+  if(!file||!jd)return alert('Upload resume and enter job description');
+  const fd=new FormData();
+  fd.append('files',file);
+  fetch(`${API}/upload`,{method:'POST',body:fd})
+  .then(r=>r.json())
+  .then(up=>{
+    if(!up.success)throw new Error(up.message);
+    return fetch(`${API}/process`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({job_description:jd,top_n:1,min_score:0})});
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(!data.success||!data.results.length)throw new Error(data.message||'No results');
+    const r=data.results[0];
+    fetch(`${API}/clear-uploads`,{method:'POST'});
+    const pct=r.total_score;
+    const color=pct>=75?'#4ade80':pct>=50?'#fbbf24':'#fca5a5';
+    document.getElementById('atsResult').innerHTML=`
+    <div class="card">
+      <h2 style="margin-bottom:20px;">ATS Score Results</h2>
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="font-size:3.5rem;font-weight:700;color:${color};line-height:1;">${pct}%</div>
+        <p style="color:rgba(255,255,255,.5);margin-top:6px;font-size:.85rem;">ATS Compatibility Score</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+        ${[['Required Skills',r.scores.required_skills],['Preferred Skills',r.scores.preferred_skills],['Experience',r.scores.experience],['Keywords',r.scores.keyword]].map(([l,v])=>`
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:.75rem;color:rgba(255,255,255,.5);">${l}</span>
+            <span style="font-size:.82rem;font-weight:600;color:#818cf8;">${v}%</span>
+          </div>
+          <div class="match-bar-track"><div class="match-bar-fill" style="width:${v}%;"></div></div>
+        </div>`).join('')}
+      </div>
+      ${r.matched_skills&&r.matched_skills.length?`<div style="margin-bottom:16px;"><div style="font-size:.8rem;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:8px;">✅ Matched Skills</div><div>${r.matched_skills.map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div></div>`:''}
+      ${r.missing_skills&&r.missing_skills.length?`
+      <div style="padding:16px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:10px;">
+        <div style="font-size:.8rem;font-weight:600;color:#fca5a5;margin-bottom:8px;">❌ Missing Skills — Add these to improve your score</div>
+        <div>${r.missing_skills.map(s=>`<span class="gap-tag">${s}</span>`).join('')}</div>
+      </div>`:'<div style="padding:14px;background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:10px;color:#4ade80;font-size:.85rem;">🎉 You match all required skills for this job!</div>'}
+    </div>`;
+  })
+  .catch(err=>{document.getElementById('atsResult').innerHTML=`<div class="card"><p style="color:#fca5a5;">Error: ${err.message}</p></div>`;});
+}
+
+function show(s){
+  document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.getElementById(s).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes(`'${s}'`))n.classList.add('active');
+  });
+  const titles={jobs:'Browse Jobs',upload:'Upload Resume',applications:'My Applications',ats:'ATS Checker',profile:'Profile'};
+  document.getElementById('title').textContent=titles[s]||s;
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('active');}
+function logout(){sessionStorage.clear();location.href='auth/landing.html';}
+</script>
+</body>
+</html>
+

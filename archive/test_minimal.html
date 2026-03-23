@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test</title>
+</head>
+<body>
+    <h1>Upload Test</h1>
+    <input type="file" id="f" multiple>
+    <button onclick="up()">Upload</button>
+    <div id="r"></div>
+
+    <script>
+        async function up() {
+            const fd = new FormData();
+            const files = document.getElementById('f').files;
+            
+            for (let f of files) {
+                fd.append('files', f);
+            }
+            
+            try {
+                const res = await fetch('http://localhost:5000/api/upload', {
+                    method: 'POST',
+                    body: fd
+                });
+                const data = await res.json();
+                document.getElementById('r').innerHTML = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('r').innerHTML = 'ERROR: ' + e.message;
+            }
+        }
+    </script>
+</body>
+</html>

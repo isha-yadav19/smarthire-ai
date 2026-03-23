@@ -1,0 +1,220 @@
+{
+  "courses": {
+    "Python": [
+      {
+        "title": "Complete Python Bootcamp",
+        "provider": "Udemy",
+        "duration": "22 hours",
+        "level": "Beginner to Advanced",
+        "url": "https://www.udemy.com/course/complete-python-bootcamp/",
+        "priority": "high"
+      },
+      {
+        "title": "Python for Everybody",
+        "provider": "Coursera",
+        "duration": "8 months",
+        "level": "Beginner",
+        "url": "https://www.coursera.org/specializations/python",
+        "priority": "medium"
+      }
+    ],
+    "JavaScript": [
+      {
+        "title": "The Complete JavaScript Course",
+        "provider": "Udemy",
+        "duration": "69 hours",
+        "level": "Beginner to Advanced",
+        "url": "https://www.udemy.com/course/the-complete-javascript-course/",
+        "priority": "high"
+      }
+    ],
+    "React": [
+      {
+        "title": "React - The Complete Guide",
+        "provider": "Udemy",
+        "duration": "48 hours",
+        "level": "Intermediate",
+        "url": "https://www.udemy.com/course/react-the-complete-guide/",
+        "priority": "high"
+      }
+    ],
+    "Docker": [
+      {
+        "title": "Docker Mastery",
+        "provider": "Udemy",
+        "duration": "20 hours",
+        "level": "Beginner to Advanced",
+        "url": "https://www.udemy.com/course/docker-mastery/",
+        "priority": "high"
+      }
+    ],
+    "Kubernetes": [
+      {
+        "title": "Kubernetes for Beginners",
+        "provider": "Coursera",
+        "duration": "4 weeks",
+        "level": "Beginner",
+        "url": "https://www.coursera.org/learn/kubernetes-basics",
+        "priority": "high"
+      },
+      {
+        "title": "Kubernetes Certified Administrator",
+        "provider": "Udemy",
+        "duration": "15 hours",
+        "level": "Advanced",
+        "url": "https://www.udemy.com/course/certified-kubernetes-administrator/",
+        "priority": "medium"
+      }
+    ],
+    "AWS": [
+      {
+        "title": "AWS Certified Solutions Architect",
+        "provider": "Udemy",
+        "duration": "27 hours",
+        "level": "Intermediate",
+        "url": "https://www.udemy.com/course/aws-certified-solutions-architect-associate/",
+        "priority": "high"
+      }
+    ],
+    "Azure": [
+      {
+        "title": "Microsoft Azure Fundamentals",
+        "provider": "Microsoft Learn",
+        "duration": "10 hours",
+        "level": "Beginner",
+        "url": "https://learn.microsoft.com/en-us/training/paths/azure-fundamentals/",
+        "priority": "high"
+      }
+    ],
+    "Django": [
+      {
+        "title": "Python Django - The Practical Guide",
+        "provider": "Udemy",
+        "duration": "23 hours",
+        "level": "Intermediate",
+        "url": "https://www.udemy.com/course/python-django-the-practical-guide/",
+        "priority": "high"
+      }
+    ],
+    "Node.js": [
+      {
+        "title": "The Complete Node.js Developer Course",
+        "provider": "Udemy",
+        "duration": "35 hours",
+        "level": "Beginner to Advanced",
+        "url": "https://www.udemy.com/course/the-complete-nodejs-developer-course/",
+        "priority": "high"
+      }
+    ],
+    "SQL": [
+      {
+        "title": "The Complete SQL Bootcamp",
+        "provider": "Udemy",
+        "duration": "9 hours",
+        "level": "Beginner",
+        "url": "https://www.udemy.com/course/the-complete-sql-bootcamp/",
+        "priority": "high"
+      }
+    ],
+    "PostgreSQL": [
+      {
+        "title": "PostgreSQL for Everybody",
+        "provider": "Coursera",
+        "duration": "4 weeks",
+        "level": "Beginner",
+        "url": "https://www.coursera.org/learn/postgresql",
+        "priority": "medium"
+      }
+    ],
+    "MongoDB": [
+      {
+        "title": "MongoDB - The Complete Developer's Guide",
+        "provider": "Udemy",
+        "duration": "17 hours",
+        "level": "Beginner to Advanced",
+        "url": "https://www.udemy.com/course/mongodb-the-complete-developers-guide/",
+        "priority": "high"
+      }
+    ],
+    "Git": [
+      {
+        "title": "Git Complete: The Definitive Guide",
+        "provider": "Udemy",
+        "duration": "6 hours",
+        "level": "Beginner",
+        "url": "https://www.udemy.com/course/git-complete/",
+        "priority": "medium"
+      }
+    ],
+    "CI/CD": [
+      {
+        "title": "DevOps: CI/CD with Jenkins",
+        "provider": "Udemy",
+        "duration": "12 hours",
+        "level": "Intermediate",
+        "url": "https://www.udemy.com/course/jenkins-from-zero-to-hero/",
+        "priority": "high"
+      }
+    ],
+    "Machine Learning": [
+      {
+        "title": "Machine Learning Specialization",
+        "provider": "Coursera",
+        "duration": "3 months",
+        "level": "Intermediate",
+        "url": "https://www.coursera.org/specializations/machine-learning-introduction",
+        "priority": "high"
+      }
+    ],
+    "Data Science": [
+      {
+        "title": "Data Science Professional Certificate",
+        "provider": "IBM (Coursera)",
+        "duration": "11 months",
+        "level": "Beginner",
+        "url": "https://www.coursera.org/professional-certificates/ibm-data-science",
+        "priority": "high"
+      }
+    ],
+    "Agile": [
+      {
+        "title": "Agile with Atlassian Jira",
+        "provider": "Coursera",
+        "duration": "4 weeks",
+        "level": "Beginner",
+        "url": "https://www.coursera.org/learn/agile-atlassian-jira",
+        "priority": "medium"
+      }
+    ],
+    "Scrum": [
+      {
+        "title": "Scrum Master Certification",
+        "provider": "Udemy",
+        "duration": "8 hours",
+        "level": "Beginner",
+        "url": "https://www.udemy.com/course/scrum-master-certification/",
+        "priority": "medium"
+      }
+    ],
+    "REST API": [
+      {
+        "title": "REST APIs with Flask and Python",
+        "provider": "Udemy",
+        "duration": "17 hours",
+        "level": "Intermediate",
+        "url": "https://www.udemy.com/course/rest-api-flask-and-python/",
+        "priority": "high"
+      }
+    ],
+    "GraphQL": [
+      {
+        "title": "GraphQL with React: The Complete Guide",
+        "provider": "Udemy",
+        "duration": "13 hours",
+        "level": "Intermediate",
+        "url": "https://www.udemy.com/course/graphql-with-react-course/",
+        "priority": "medium"
+      }
+    ]
+  }
+}

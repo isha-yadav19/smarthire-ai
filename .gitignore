@@ -1,7 +1,7 @@
 # Virtual environment
 venv/
 env/
-.env/
+.env
 
 # Python cache
 __pycache__/
@@ -38,3 +38,8 @@ dist/
 build/
 *.egg-info/
 
+# Uploads (runtime files)
+uploads/
+
+# Sensitive data - use environment variables in production
+data/users.json

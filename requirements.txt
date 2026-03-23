@@ -1,10 +1,21 @@
-# Core dependencies for Resume Parser
+# === Core API (required) ===
+Flask>=3.0.0
+Flask-CORS>=4.0.0
+bcrypt>=4.1.1
+Werkzeug>=3.0.0
+python-dotenv>=1.0.0
+gunicorn>=21.2.0
+
+# === Resume Parsing (required) ===
 PyPDF2>=3.0.1
 python-docx>=1.2.0
 
-# PDF generation (for converting JSONL to PDF)
+# === PDF Generation (optional - for generating test PDFs) ===
 reportlab>=4.0.0
 
-# Web UI (Streamlit)
-streamlit>=1.28.0
-pandas>=2.0.0
+# === Database (optional - only if using PostgreSQL auth) ===
+# psycopg2-binary>=2.9.9
+
+# === Streamlit UI (reference only - not used in standalone site) ===
+# streamlit>=1.28.0
+# pandas>=2.0.0

@@ -1,0 +1,3 @@
+@echo off
+echo Opening SmartHire.AI Login Page...
+start "" "%~dp0auth\login.html"
