@@ -40,6 +40,23 @@ CORS(app, supports_credentials=True)
 
 auth_manager = AuthManager()
 
+# Ensure demo users always exist (survives fresh deploys)
+def _seed_demo_users():
+    demo = [
+        ('ada', 'ada@smarthire.ai', 'demo123', 'recruiter'),
+        ('isha', 'isha@smarthire.ai', 'demo123', 'candidate'),
+    ]
+    for username, email, password, role in demo:
+        if username not in auth_manager.users:
+            auth_manager.register_user(username, email, password, role)
+            print(f"[SEED] Created demo user: {username}")
+        else:
+            # Reset password to demo123 in case it changed
+            auth_manager.users[username]['password_hash'] = auth_manager.hash_password(password)
+            auth_manager._save_users(auth_manager.users)
+
+_seed_demo_users()
+
 # Upload folder — always relative to project root
 UPLOAD_FOLDER = ROOT_DIR / 'uploads'
 UPLOAD_FOLDER.mkdir(exist_ok=True)
