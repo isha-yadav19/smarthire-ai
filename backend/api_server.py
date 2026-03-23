@@ -32,7 +32,8 @@ from matcher import ResumeScorer
 
 app = Flask(__name__, static_folder=str(ROOT_DIR), static_url_path='')
 app.secret_key = os.environ.get('SECRET_KEY', 'smarthire-dev-secret-key-2026')
-app.config['SESSION_COOKIE_SECURE'] = False
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production'
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=8)
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB
 CORS(app, supports_credentials=True)
